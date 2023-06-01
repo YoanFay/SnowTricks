@@ -30,7 +30,7 @@ class User
     private $mail;
 
     /**
-     * @ORM\Column(type="string", length=45)
+     * @ORM\Column(type="string", length=255)
      */
     private $password;
 
@@ -43,6 +43,12 @@ class User
      * @ORM\OneToMany(targetEntity=Commentaire::class, mappedBy="user")
      */
     private $commentaires;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Rights::class, inversedBy="users")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $rights;
 
     public function __construct()
     {
@@ -147,6 +153,18 @@ class User
                 $commentaire->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getRights(): ?Rights
+    {
+        return $this->rights;
+    }
+
+    public function setRights(?Rights $rights): self
+    {
+        $this->rights = $rights;
 
         return $this;
     }
