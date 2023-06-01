@@ -39,6 +39,7 @@ class UsersFixtures extends Fixture implements DependentFixtureInterface
             $user->setMail($userTab['mail']);
             $user->setPassword(password_hash($userTab['password'], PASSWORD_BCRYPT));
             $user->setRights($userTab['right']);
+            $user->setCreatedAt(new \DateTime());
 
             $this->addReference($userTab['login'], $user);
 
