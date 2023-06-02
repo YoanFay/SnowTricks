@@ -1,0 +1,70 @@
+{% extends 'layout/menu.html.twig' %}
+
+{% block main %}
+
+    <div id="homepageImg"
+         class="w-100 flex-column justify-content-between align-items-center p-2 {% if tricksPage != null %}display-none{% else %}display-flex{% endif %}">
+        <div></div>
+        <div class="catchPhrase">
+            <p class="h1">
+                Dévalez les pentes avec style grâce à notre site de figures de snowboard : explorez,
+                apprenez et inspirez-vous pour des descentes exceptionnelles !
+            </p>
+        </div>
+        {# TODO:Changer la flèche de coté à la fin #}
+        <div class="w-100 d-flex">
+            <span id="arrowDownward" class="material-symbols-outlined">arrow_downward</span>
+        </div>
+
+    </div>
+
+    <div id="homepageTricks"
+         class="w-100 flex-column justify-content-between align-items-center p-2 {% if tricksPage != null %}display-flex{% else %}display-none{% endif %}">
+
+        <div></div>
+        <div id="listTricks">
+            {% for trick in tricks %}
+                <div>
+                    <p>{{ trick.name }}</p>
+                    <img src="/img/Tricks/{{ trick.slug }}/{{ trick.images.values[0].name }}.{{ trick.images.values[0].type }}">
+                </div>
+            {% endfor %}
+        </div>
+        {# TODO:Changer la flèche de coté à la fin #}
+        <div class="w-100 d-flex">
+            <span id="arrowUpward" class="material-symbols-outlined">arrow_upward</span>
+        </div>
+
+    </div>
+
+{% endblock %}
+
+
+{% block scripts %}
+    <script>
+
+        $("#arrowDownward").click(function () {
+            $("#homepageImg").slideUp("slow");
+            $("#homepageTricks").slideDown({
+                start: function () {
+                    $(this).css({
+                        display: "flex"
+                    })
+                }
+            });
+            $("#pageTitle").html('Tricks');
+        });
+
+        $("#arrowUpward").click(function () {
+            $("#homepageImg").slideDown({
+                start: function () {
+                    $(this).css({
+                        display: "flex"
+                    })
+                }
+            });
+            $("#homepageTricks").slideUp("slow");
+            $("#pageTitle").html('Accueil');
+        });
+    </script>
+{% endblock %}

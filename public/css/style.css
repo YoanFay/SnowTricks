@@ -1,0 +1,83 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+header{
+  height: 13%;
+}
+
+main {
+  width: 100%;
+  height: 87%;
+}
+
+#homepageImg {
+  width: 100%;
+  height: 100%;
+  background-image: url("../img/wallpaper.jpg");
+}
+
+#homepageTricks {
+  width: 100%;
+  height: 100%;
+}
+
+.display-flex{
+  display: flex;
+}
+
+.display-none{
+  display: none;
+}
+
+#listTricks{
+  overflow-y: scroll;
+}
+
+#arrowDownward, #arrowUpward{
+  font-weight: bold;
+  font-size: xxx-large;
+  color: black;
+}
+
+.wallpaperConstruct {
+  width: 100%;
+  height: 100%;
+  background-image: url("../img/construct.jpg");
+  background-repeat: no-repeat;
+  background-size: 50%;
+  background-position: center;
+}
+
+#homepageImg .catchPhrase{
+  color: black;
+  font-family: 'Permanent Marker', cursive;
+  width: 77%;
+}
+
+ul li{
+  display: inline;
+}
+
+.menu {
+   display: inline-block;
+   border-radius: 50%;
+   background-color: black;
+   padding: 3%;
+   margin: 4px;
+ }
+
+.menu a {
+  color: white;
+  text-decoration: none;
+  margin: 2%;
+  font-family: 'Monomaniac One', sans-serif;
+  font-family: 'Permanent Marker', cursive;
+
+}
+
+.menu a:hover {
+  color: #47ff00;
+  text-decoration: none;
+}

@@ -100,6 +100,9 @@ class TricksFixtures extends Fixture implements DependentFixtureInterface
             $trick->setCreatedAt(new \DateTime());
             $trick->setUser($trickTab['user']);
             $trick->setCategory($trickTab['category']);
+
+            $this->addReference($trickTab['slug'], $trick);
+
             $manager->persist($trick);
         }
 
