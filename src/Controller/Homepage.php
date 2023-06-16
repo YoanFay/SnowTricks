@@ -15,8 +15,15 @@ class Homepage extends AbstractController{
 
         $tricks = $tricksRepository->findAll();
 
+        if ($tricksPage === null){
+            $title = "Accueil";
+        }
+        else{
+            $title = "Tricks";
+        }
+
         return $this->render('homepage/index.html.twig', [
-            'title' => 'Accueil',
+            'title' => $title,
             'tricks' => $tricks,
             'tricksPage' => $tricksPage
         ]);

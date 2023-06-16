@@ -2,18 +2,27 @@
 
 namespace App\Controller;
 
+use App\Repository\TricksRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
-class Tricks extends AbstractController{
+class Tricks extends AbstractController
+{
 
     /**
-     * @Route("/tricks", name="tricksList")
+     * @Route("/tricks/details/{slug}", name="tricksDetails")
      */
-    public function tricksList(){
+    public function tricksDetails(
+        TricksRepository $tricksRepository,
+        $slug
+    )
+    {
 
-        return $this->render('tricks/list.html.twig', [
-            'title' => 'Tricks'
+        $trick = $tricksRepository->findOneBy(['slug' => $slug]);
+
+        return $this->render('tricks/details.html.twig', [
+            'title' => 'Tricks',
+            'trick' => $trick
         ]);
     }
 }

@@ -19,6 +19,16 @@ class ImagesFixtures extends Fixture implements DependentFixtureInterface {
                 'type' => 'jpg'
             ],
             [
+                'tricks' => $this->getReference('mute'),
+                'name' => '02',
+                'type' => 'jpeg'
+            ],
+            [
+                'tricks' => $this->getReference('mute'),
+                'name' => '03',
+                'type' => 'jpg'
+            ],
+            [
                 'tricks' => $this->getReference('stalefish'),
                 'name' => '01',
                 'type' => 'jpg'
