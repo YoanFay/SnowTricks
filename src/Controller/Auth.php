@@ -76,4 +76,11 @@ class Auth extends AbstractController{
      */
     public function Logout(){
     }
+
+    /**
+     * @Route("/auth/password/ask", name="ask_new_password")
+     */
+    public function askNewPassword(){
+
+    }
 }

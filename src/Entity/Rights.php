@@ -58,12 +58,12 @@ class Rights
 
     public function getRole(): ?string
     {
-        return $this->level;
+        return $this->role;
     }
 
-    public function setRole(int $level): self
+    public function setRole(string $role): self
     {
-        $this->level = $level;
+        $this->role = $role;
 
         return $this;
     }
