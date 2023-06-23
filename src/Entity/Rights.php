@@ -25,9 +25,9 @@ class Rights
     private $name;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string", length=45)
      */
-    private $level;
+    private $role;
 
     /**
      * @ORM\OneToMany(targetEntity=User::class, mappedBy="rights")
@@ -56,12 +56,12 @@ class Rights
         return $this;
     }
 
-    public function getLevel(): ?int
+    public function getRole(): ?string
     {
         return $this->level;
     }
 
-    public function setLevel(int $level): self
+    public function setRole(int $level): self
     {
         $this->level = $level;
 
