@@ -4,17 +4,37 @@
 
     <div class="background fullpage d-flex justify-content-center align-items-center">
         <div class="card p-4 w-25">
-            {{ form_start(form) }}
+            {{ form_start(form, {'attr': {'id': 'form_signUp'}}) }}
             {{ form_label(form.login) }}
-            {{ form_widget(form.login, { 'attr': { 'class' : 'form-control mb-3' } }) }}
+            {{ form_widget(form.login, { 'attr': { 'class' : 'form-control mb-3 mt-1' } }) }}
+            {{ form_errors(form.login) }}
             {{ form_label(form.mail) }}
-            {{ form_widget(form.mail, { 'attr': { 'class' : 'form-control mb-3' } }) }}
+            {{ form_widget(form.mail, { 'attr': { 'class' : 'form-control mb-3 mt-1' } }) }}
             {{ form_label(form.password) }}
-            {{ form_widget(form.password, { 'attr': { 'class' : 'form-control mb-3' } }) }}
+            {{ form_widget(form.password, { 'attr': { 'class' : 'form-control mb-3 mt-1' } }) }}
+            {{ form_label(form.passwordConfirm) }}
+            {{ form_widget(form.passwordConfirm, { 'attr': { 'class' : 'form-control mb-3 mt-1' } }) }}
+            <p id="textWrongPassword" class="d-none text-danger">Les mots de passe sont différents</p>
             {{ form_label(form.submit) }}
             {{ form_widget(form.submit, { 'attr': { 'class' : 'btn btn-primary mt-3' } }) }}
             {{ form_end(form) }}
         </div>
     </div>
+
+{% endblock %}
+
+{% block scripts %}
+
+    <script>
+        $('#form_submit').click(function (){
+            event.preventDefault();
+
+            if ($('#form_password').val() === $('#form_passwordConfirm').val()){
+                $('#form_signUp').submit()
+            }else {
+                $('#textWrongPassword').removeClass('d-none')
+            }
+        })
+    </script>
 
 {% endblock %}

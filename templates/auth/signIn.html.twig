@@ -10,10 +10,10 @@
 
         <div class="card p-4 w-25">
             <form action="{{ path('signIn') }}" method="post">
-                <label for="username">Login</label>
-                <input type="text" id="login" name="login" value="{{ last_username }}" class="form-control mb-3"/>
+                <label for="username">Identifiant</label>
+                <input type="text" id="login" name="login" value="{{ last_username }}" class="form-control mb-3 mt-1"/>
                 <label for="password">Mot de passe</label>
-                <input type="password" id="password" name="password" class="form-control mb-3"/>
+                <input type="password" id="password" name="password" class="form-control mb-3 mt-1"/>
                 <input type="hidden" name="_target_path" value="{{ app.request.get('redirect_to') }}"/>
                 <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"/>
                 <button type="submit" class="btn btn-primary">
