@@ -11,8 +11,12 @@
             <ul class="m-0">
                 <li class="px-2 menu"><a href="{{ path('index') }}">Accueil</a></li>
                 <li class="px-2 menu"><a href="{{ path('index', {'tricksPage': 'tricks'}) }}">Tricks</a></li>
+                {% if app.user == null %}
                 <li class="px-2 menu"><a href="{{ path('signUp') }}">Inscription</a></li>
                 <li class="px-2 menu"><a href="{{ path('signIn') }}">Connexion</a></li>
+                {% else %}
+                    <li class="px-2 menu"><a href="{{ path('logout') }}">Déconnexion</a></li>
+                {% endif %}
             </ul>
         </div>
     </div>

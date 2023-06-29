@@ -13,22 +13,22 @@ class RightsFixtures extends Fixture
         $rights = [
             [
                 'name' => 'Utilisateur',
-                'level' => 10
+                'role' => 'ROLE_USER'
             ],
             [
                 'name' => 'Administrateur',
-                'level' => 70
+                'role' => 'ROLE_ADMIN'
             ],
             [
                 'name' => 'Super-Administrateur',
-                'level' => 99
+                'role' => 'ROLE_SUPER_ADMIN'
             ],
         ];
 
         foreach ($rights as $rightTab) {
             $right = new Rights();
             $right->setName($rightTab['name']);
-            $right->setLevel($rightTab['level']);
+            $right->setRole($rightTab['role']);
 
             $this->addReference($rightTab['name'], $right);
 
