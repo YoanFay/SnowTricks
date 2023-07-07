@@ -59,6 +59,11 @@ class User implements UserInterface
      */
     private $rights;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $confirmed = false;
+
     public function __construct()
     {
         $this->tricks = new ArrayCollection();
@@ -218,5 +223,17 @@ class User implements UserInterface
     public function __call($name, $arguments)
     {
         // TODO: Implement @method string getUserIdentifier()
+    }
+
+    public function isConfirmed(): ?bool
+    {
+        return $this->confirmed;
+    }
+
+    public function setConfirmed(bool $confirmed): self
+    {
+        $this->confirmed = $confirmed;
+
+        return $this;
     }
 }

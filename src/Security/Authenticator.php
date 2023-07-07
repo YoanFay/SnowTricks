@@ -84,8 +84,11 @@ class Authenticator extends AbstractFormLoginAuthenticator
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['login' => $credentials['login']]);
 
         if (!$user) {
-            // fail authentication with a custom error
-            throw new CustomUserMessageAuthenticationException('Login could not be found.');
+            throw new CustomUserMessageAuthenticationException('Utilisateur non trouvé.');
+        }
+
+        if (!$user->isConfirmed()) {
+            throw new CustomUserMessageAuthenticationException("Votre compte n'a pas été confirmé, cliqué sur le bouton dans l'email que nous vous avons envoyé pour le confirmer.");
         }
 
         return $user;
