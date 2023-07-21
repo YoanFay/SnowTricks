@@ -1,0 +1,99 @@
+{% extends 'layout/menu.html.twig' %}
+
+{% block main %}
+
+    <div class="background d-flex justify-content-center align-items-center">
+        <div class="col-6 card p-4 w-25 m-4">
+            {{ form_start(form) }}
+            {{ form_label(form.name) }}
+            {{ form_widget(form.name, { 'attr': { 'class' : 'form-control mb-3 mt-1' } }) }}
+            {{ form_errors(form.name) }}
+            {{ form_label(form.description) }}
+            {{ form_widget(form.description, { 'attr': { 'class' : 'form-control mb-3 mt-1' } }) }}
+            {{ form_errors(form.description) }}
+            {{ form_label(form.category) }}
+            {{ form_widget(form.category, { 'attr': { 'class' : 'form-control mb-3 mt-1' } }) }}
+            {{ form_errors(form.category) }}
+            {{ form_label(form.images) }}
+            {{ form_widget(form.images, { 'attr': { 'class' : 'form-control mb-3 mt-1' } }) }}
+            <div id="video" data-prototype="{{ form_widget(form.videos.vars.prototype)|e('html_attr') }}">
+                {{ form_row(form.videos) }}
+                <button class="btn btn-secondary" id="add-line">Ajouter une ligne</button>
+            </div>
+            <p id="imgError"></p>
+            <p id="imgExt" class="text-error d-none">Les extensions acceptées sont : png, jpg, jpeg, webp, avif et svg</p>
+            {{ form_label(form.submit) }}
+            {{ form_widget(form.submit, { 'attr': { 'class' : 'btn btn-primary mt-3' } }) }}
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+
+    <script>
+        $('#add_tricks_images').change(function (){
+            var names = [];
+            var authorizedExt = ['png', 'jpg', 'jpeg', 'webp', 'avif', 'svg']
+            var error = "<ul class='d-flex flex-column'>"
+            for (var i = 0; i < $(this).get(0).files.length; ++i) {
+                var name = $(this).get(0).files[i].name.toLowerCase();
+                var extension = name.substr( (name.lastIndexOf('.') +1) );
+                if(jQuery.inArray(extension, authorizedExt) === -1){
+                    error = error + "<li>Le fichier " + name + " n'est pas autorisé</li>"
+                }
+                names.push(name);
+            }
+            error = error+"</ul>"
+
+            if (error !== "<ul class='d-flex flex-column'></ul>"){
+                $('#add_tricks_submit'). attr("disabled", true);
+                $('#imgError').html(error);
+                $('#imgExt').removeClass('d-none');
+            }else{
+                $('#add_tricks_submit'). attr("disabled", false);
+                $('#imgError').html('');
+                $('#imgExt').addClass('d-none');
+            }
+        });
+
+
+        $(document).ready(function() {
+            var collectionContainer = $('div#video');
+            var count = collectionContainer.children().length;
+
+            $('button#add-line').click(function(e) {
+                addLine(collectionContainer);
+                e.preventDefault();
+            });
+
+            collectionContainer.on('click', 'button.delete-line', function(e) {
+                var id = $(this).attr('id')
+                deleteLine(id.replace('deleteLine', ''));
+                e.preventDefault();
+            });
+
+            function addLine(collectionContainer) {
+                var prototype = collectionContainer.data('prototype');
+                var newForm = prototype.replace(/__name__/g, count);
+                var newLine = $(newForm);
+                addDeleteButton(newLine);
+                collectionContainer.append(newLine);
+                count++;
+            }
+
+            function addDeleteButton(line) {
+                var deleteButton = $('<button id="deleteLine' + count + '" class="delete-line btn btn-danger">Supprimer</button>');
+                line.append(deleteButton);
+            }
+
+            function deleteLine(number) {
+                console.log(number)
+                var line = $('#add_tricks_videos_'+number);
+                line.remove();
+            }
+        });
+    </script>
+
+{% endblock %}

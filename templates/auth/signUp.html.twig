@@ -10,44 +10,16 @@
             {{ form_errors(form.login) }}
             {{ form_label(form.mail) }}
             {{ form_widget(form.mail, { 'attr': { 'class' : 'form-control mb-3 mt-1' } }) }}
-            <p id="textEmptyMail" class="d-none text-danger">L'email ne peut pas être vide</p>
-            {{ form_label(form.password) }}
-            {{ form_widget(form.password, { 'attr': { 'class' : 'form-control mb-3 mt-1' } }) }}
-            {{ form_label(form.passwordConfirm) }}
-            {{ form_widget(form.passwordConfirm, { 'attr': { 'class' : 'form-control mb-3 mt-1' } }) }}
-            <p id="textWrongPassword" class="d-none text-danger">Les mots de passe sont différents</p>
+            {{ form_errors(form.mail) }}
+            {{ form_label(form.password.first) }}
+            {{ form_widget(form.password.first, { 'attr': { 'class' : 'form-control mb-3 mt-1' } }) }}
+            {{ form_label(form.password.second) }}
+            {{ form_widget(form.password.second, { 'attr': { 'class' : 'form-control mb-3 mt-1' } }) }}
+            {{ form_errors(form.password.first) }}
             {{ form_label(form.submit) }}
             {{ form_widget(form.submit, { 'attr': { 'class' : 'btn btn-primary mt-3' } }) }}
             {{ form_end(form) }}
         </div>
     </div>
-
-{% endblock %}
-
-{% block scripts %}
-    {{ parent() }}
-
-    <script>
-        $('#form_submit').click(function (){
-            event.preventDefault();
-
-            if ($('#form_mail').val() === ""){
-                $('#textEmptyMail').removeClass('d-none')
-            }else{
-                $('#textEmptyMail').addClass('d-none')
-            }
-
-            if ($('#form_password').val() !== $('#form_passwordConfirm').val()){
-                $('#textWrongPassword').removeClass('d-none')
-            }else{
-                $('#textWrongPassword').addClass('d-none')
-            }
-
-            if ($('#form_password').val() === $('#form_passwordConfirm').val() && $('#form_mail').val() !== ""){
-                $('#form_signUp').submit()
-            }
-
-        })
-    </script>
 
 {% endblock %}

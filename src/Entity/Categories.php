@@ -6,8 +6,11 @@ use App\Repository\CategoriesRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
+ * @UniqueEntity(fields={"name"}, message="Une catégorie existe déjà avec ce nom")
  * @ORM\Entity(repositoryClass=CategoriesRepository::class)
  */
 class Categories
@@ -21,6 +24,15 @@ class Categories
 
     /**
      * @ORM\Column(type="string", length=45)
+     * @Assert\Length(
+     *     min = 3,
+     *     max = 45,
+     *     minMessage = "Cette valeur est trop courte. Elle doit comporter {{ limit }} caractères ou plus.",
+     *     maxMessage = "Cette valeur est trop longue. Elle doit comporter {{ limit }} caractères ou moins."
+     *     )
+     * @Assert\NotNull(
+     *     message = "Le nom ne peut pas être vide"
+     * )
      */
     private $name;
 

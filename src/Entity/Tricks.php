@@ -3,11 +3,15 @@
 namespace App\Entity;
 
 use App\Repository\TricksRepository;
+use App\Service\UtilitaireService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
+ * @UniqueEntity(fields={"name"}, message="Un trick existe déjà avec ce nom")
  * @ORM\Entity(repositoryClass=TricksRepository::class)
  */
 class Tricks
@@ -21,11 +25,29 @@ class Tricks
 
     /**
      * @ORM\Column(type="string", length=20)
+     * @Assert\Length(
+     *     min = 3,
+     *     max = 20,
+     *     minMessage = "Cette valeur est trop courte. Elle doit comporter {{ limit }} caractères ou plus.",
+     *     maxMessage = "Cette valeur est trop longue. Elle doit comporter {{ limit }} caractères ou moins."
+     *     )
+     * @Assert\NotNull(
+     *     message = "Le nom ne peut pas être vide"
+     * )
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Length(
+     *     min = 3,
+     *     max = 255,
+     *     minMessage = "Cette valeur est trop courte. Elle doit comporter {{ limit }} caractères ou plus.",
+     *     maxMessage = "Cette valeur est trop longue. Elle doit comporter {{ limit }} caractères ou moins."
+     *     )
+     * @Assert\NotNull(
+     *     message = "La description ne peut pas être vide"
+     * )
      */
     private $description;
 
@@ -78,6 +100,7 @@ class Tricks
 
     public function __construct()
     {
+        $this->setCreatedAt(new \DateTime());
         $this->commentaires = new ArrayCollection();
         $this->images = new ArrayCollection();
         $this->videos = new ArrayCollection();

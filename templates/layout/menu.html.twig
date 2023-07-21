@@ -4,7 +4,7 @@
 
     <div class="p-2 d-flex flex-row justify-content-between w-100 h-100">
         <div class="d-flex flex-row align-items-center">
-            <img src="/img/logo.png" height="100%">
+            <img src="/img/logo.png" class="cursor-click h-100" onclick="Homepage()">
             <h1 id="pageTitle" class="ms-4">{{ title }}</h1>
         </div>
         <div class="d-flex align-items-center">
@@ -12,8 +12,8 @@
                 <li class="px-2 menu"><a href="{{ path('index') }}">Accueil</a></li>
                 <li class="px-2 menu"><a href="{{ path('index', {'tricksPage': 'tricks'}) }}">Tricks</a></li>
                 {% if app.user == null %}
-                <li class="px-2 menu"><a href="{{ path('signUp') }}">Inscription</a></li>
-                <li class="px-2 menu"><a href="{{ path('signIn') }}">Connexion</a></li>
+                    <li class="px-2 menu"><a href="{{ path('signUp') }}">Inscription</a></li>
+                    <li class="px-2 menu"><a href="{{ path('signIn') }}">Connexion</a></li>
                 {% else %}
                     <li class="px-2 menu"><a href="{{ path('logout') }}">Déconnexion</a></li>
                 {% endif %}
@@ -21,4 +21,13 @@
         </div>
     </div>
 
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+    <script>
+        function Homepage(){
+            window.location.href = "{{ path('index') }}";
+        }
+    </script>
 {% endblock %}

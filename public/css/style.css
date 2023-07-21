@@ -16,6 +16,7 @@ main {
   background-image: url("../img/wallpaper.jpg");
   background-repeat: no-repeat;
   background-attachment: fixed;
+  min-height: 100%;
 }
 
 .fullpage {
@@ -126,6 +127,10 @@ form ul li{
   color: #ff0000ff;
 }
 
+.text-error{
+  color: #ff0000ff;
+}
+
 #snackbar {
   visibility: hidden;
   min-width: 250px;
@@ -145,4 +150,8 @@ form ul li{
   visibility: visible;
   -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
   animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+.cursor-click {
+  cursor: pointer;
 }
