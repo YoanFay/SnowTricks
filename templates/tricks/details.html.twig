@@ -3,31 +3,36 @@
 {% block main %}
 
     <div class="background d-flex justify-content-center">
-        <div id="detailTricks" class="col-6 card m-4">
+        <div class="col-6 card m-4">
             <div class="card-header">
                 <h2>{{ trick.name }} ({{ trick.category.name }})</h2>
-                <small>Fiche créer le {{ trick.createdAt|date("d/m/Y") }} à {{ trick.createdAt|date("h:i") }}
+                <small>Fiche créer le {{ trick.createdAt|dateH }}
                     par {{ trick.user.login }}</small>
             </div>
             <div class="card-body">
                 <div class="d-flex align-items-center flex-column mb-4">
                     <div id="imgPrincipale">
                         <img id="selectMedia"
-                             src="/img/Tricks/{{ trick.slug }}/{{ trick.images.values[0].name }}.{{ trick.images.values[0].type }}">
+                                {% if trick.images.values[0] is defined %}
+                                    src="/img/Tricks/{{ trick.slug }}/{{ trick.images.values[0].name }}.{{ trick.images.values[0].type }}"
+                                {% else %}
+                                    src="/img/noImg.png"
+                                {% endif %}
+                        >
                     </div>
-                    <div id="galery" class="d-flex flex-row mt-2 mx-2">
+                    <div id="galery" class="d-flex flex-row mt-2 mx-2 w-100">
                         {% for image in trick.images %}
                             <img class="w-25"
                                  src="/img/Tricks/{{ trick.slug }}/{{ image.name }}.{{ image.type }}"
                                  onclick="changeImg('/img/Tricks/{{ trick.slug }}/{{ image.name }}.{{ image.type }}')">
                         {% endfor %}
                         {% for video in trick.videos %}
-                            {# <iframe class="w-100" src="{{ video.link }}"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                    allowfullscreen
-                            ></iframe> #}
                             <img class="w-25" onclick="loadEmbed('{{ video.link }}')"
-                                 src="http://i1.ytimg.com/vi/{{ video.link|replace({'https://www.youtube.com/embed/' : ''}) }}/default.jpg"
+                            {% if 'youtube' in video.link %}
+                                src="http://i1.ytimg.com/vi/{{ video.link|replace({'https://www.youtube.com/embed/' : ''}) }}/default.jpg"
+                            {% elseif 'dailymotion' in video.link %}
+                                src="https://www.dailymotion.com/thumbnail/160x120/video/{{ video.link|replace({'https://www.dailymotion.com/embed/video/' : ''}) }}"
+                            {% endif %}
                                  alt="miniature"/>
                         {% endfor %}
                     </div>

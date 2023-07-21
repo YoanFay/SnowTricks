@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @UniqueEntity(fields={"login"}, message="Un utilisateur existe déjà avec cette identifiant")
@@ -25,16 +26,34 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=45)
+     * @Assert\Length(
+     *     min = 3,
+     *     max = 45,
+     *     minMessage = "Cette valeur est trop courte. Elle doit comporter {{ limit }} caractères ou plus.",
+     *     maxMessage = "Cette valeur est trop longue. Elle doit comporter {{ limit }} caractères ou moins."
+     *     )
+     * @Assert\NotNull(
+     *     message = "L'identifiant ne peut pas être vide"
+     * )
      */
     private $login;
 
     /**
      * @ORM\Column(type="string", length=45)
+     * @Assert\Email(
+     *  message= "L'email {{ value }} n'est pas une adresse email valide."
+     * )
+     * @Assert\NotNull(
+     *     message = "L'email ne peut pas être vide"
+     * )
      */
     private $mail;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotNull(
+     *     message = "Le mot de passe ne peut pas être vide"
+     * )
      */
     private $password;
 

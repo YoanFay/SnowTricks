@@ -4,20 +4,17 @@ namespace App\Controller;
 
 use App\Entity\PasswordRequest;
 use App\Entity\User;
+use App\Form\Auth\AskNewPasswordType;
+use App\Form\Auth\ResetPasswordType;
+use App\Form\Auth\SignUpType;
 use App\Repository\PasswordRequestRepository;
 use App\Repository\RightsRepository;
 use App\Repository\UserRepository;
+use App\Service\EmailService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Email;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Routing\Annotation\Route;
 
 class Auth extends AbstractController
 {
@@ -42,29 +39,12 @@ class Auth extends AbstractController
     /**
      * @Route("/auth/inscription", name="signUp")
      */
-    public function SignUp(RightsRepository $rightsRepository, Request $request, UrlGeneratorInterface $urlGenerator, MailerInterface $mailer)
+    public function SignUp(RightsRepository $rightsRepository, Request $request, EmailService $emailService)
     {
 
         $user = new User();
 
-        $form = $this->createFormBuilder($user)
-            ->add('login', TextType::class, [
-                'label' => 'Identifiant'
-            ])
-            ->add('mail', TextType::class, [
-                'label' => 'Email'
-            ])
-            ->add('password', PasswordType::class, [
-                'label' => 'Mot de passe'
-            ])
-            ->add('passwordConfirm', PasswordType::class, [
-                'mapped' => false,
-                'label' => 'Confirmer mot de passe'
-            ])
-            ->add('submit', SubmitType::class, [
-                'label' => "Inscription"
-            ])
-            ->getForm();
+        $form = $this->createForm(SignUpType::class, $user);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -80,15 +60,7 @@ class Auth extends AbstractController
             $em->persist($user);
             $em->flush();
 
-            $url = $urlGenerator->generate('confirm_user', ['idUser' => $user->getId()], 0);
-
-            $email = (new Email())
-                ->from($user->getMail())
-                ->to('yoanfayolle.yf@gmail.com')
-                ->subject("SnowTricks - Validation d'inscription")
-                ->html("<div style='background-color: #f5f5f5; padding: 20px;'><h1>Validation d'inscription</h1><p>Merci de vous être inscrit ! Pour activer votre compte, veuillez cliquer sur le bouton ci-dessous :</p><a href=".$url." style='display: inline-block; background-color: #008CBA; color: #fff; padding: 10px 20px; text-decoration: none;'>Valider mon compte</a><p>Si le bouton ne fonctionne pas, vous pouvez également copier/coller le lien suivant dans la barre d'adresse de votre navigateur :</p><p>".$url."</p><p>Merci,</p><p>L'équipe de votre site</p>");
-
-            $mailer->send($email);
+            $emailService->EMailInscription($user);
 
             $this->addFlash('success', 'Un email de confirmation vous a été envoyé');
             return $this->redirectToRoute('signIn');
@@ -113,25 +85,15 @@ class Auth extends AbstractController
     /**
      * @Route("/auth/mot-de-passe-oublie", name="ask_new_password")
      */
-    public function askNewPassword(Request $request, UserRepository $userRepository, MailerInterface $mailer, UrlGeneratorInterface $urlGenerator)
+    public function askNewPassword(Request $request, UserRepository $userRepository, EmailService $emailService)
     {
 
-        $form = $this->createFormBuilder()
-            ->add('login', TextType::class, [
-                'label' => 'Identifiant'
-            ])
-            ->add('mail', TextType::class, [
-                'label' => 'Email'
-            ])
-            ->add('submit', SubmitType::class, [
-                'label' => "Envoyer"
-            ])
-            ->getForm();
+        $form = $this->createForm(AskNewPasswordType::class);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-            $user = $userRepository->findOneBy(['login' => $data['login'], 'mail' => $data['mail']]);
+            $user = $userRepository->findOneBy(['login' => $data['login']]);
 
             if ($user) {
 
@@ -144,16 +106,8 @@ class Auth extends AbstractController
                 $em->persist($passwordRequest);
                 $em->flush();
 
-                $url = $urlGenerator->generate('reset_password', ['token' => $passwordRequest->getToken()], 0);
+                $emailService->EMailForgotPassword($user, $passwordRequest->getToken());
 
-                $email = (new Email())
-                    ->from($user->getMail())
-                    ->to('yoanfayolle.yf@gmail.com')
-                    ->subject('SnowTricks - Demande de mot de passe')
-                    ->html("<h1>Réinitialisation de mot de passe</h1><p>Cher utilisateur,</p><p>Vous avez demandé une réinitialisation de votre mot de passe. Veuillez cliquer sur le bouton ci-dessous pour procéder à la réinitialisation :</p>
-  <a href=".$url." style='display: inline-block; background-color: #008CBA; color: #fff; padding: 10px 20px; text-decoration: none;'>Réinitialiser le mot de passe</a><p>Si vous n'avez pas demandé de réinitialisation de mot de passe, veuillez ignorer cet e-mail.</p><p>Cordialement,</p><p>L'équipe de support</p>");
-
-                $mailer->send($email);
                 $this->addFlash('success', 'Demande de nouveau mot de passe envoyé');
                 return $this->redirectToRoute('index');
             }
@@ -179,18 +133,7 @@ class Auth extends AbstractController
             return $this->redirectToRoute('signIn');
         }
 
-        $form = $this->createFormBuilder()
-            ->add('password', PasswordType::class, [
-                'label' => 'Mot de passe'
-            ])
-            ->add('passwordConfirm', PasswordType::class, [
-                'mapped' => false,
-                'label' => 'Confirmer mot de passe'
-            ])
-            ->add('submit', SubmitType::class, [
-                'label' => "Envoyer"
-            ])
-            ->getForm();
+        $form = $this->createForm(ResetPasswordType::class);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -224,9 +167,10 @@ class Auth extends AbstractController
      */
     public function confirmUser(UserRepository $userRepository, $idUser)
     {
+
         $user = $userRepository->find($idUser);
 
-        if (!$user || $user->isConfirmed()){
+        if (!$user || $user->isConfirmed()) {
             return $this->redirectToRoute('signIn');
         }
 
