@@ -39,6 +39,21 @@ class TricksRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+     * @return Tricks[] Returns an array of Tricks objects
+     */
+    public function findBetweenStartAndEnd($start, $end): array
+    {
+        return $this->createQueryBuilder('t')
+            ->andWhere('t.deleted_at IS NULL')
+            ->orderBy('t.id', 'ASC')
+            ->setFirstResult($start)
+            ->setMaxResults($end)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
 //    /**
 //     * @return Tricks[] Returns an array of Tricks objects
 //     */

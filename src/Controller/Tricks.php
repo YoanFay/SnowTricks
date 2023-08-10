@@ -10,6 +10,7 @@ use App\Repository\TricksRepository;
 use App\Service\UploadService;
 use App\Service\UtilitaireService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -24,8 +25,11 @@ class Tricks extends AbstractController
                          $slug
     )
     {
+        $trick = $tricksRepository->findOneBy(['slug' => $slug, 'deleted_at' => null]);
 
-        $trick = $tricksRepository->findOneBy(['slug' => $slug]);
+        if (!$trick){
+            throw $this->createNotFoundException();
+        }
 
         return $this->render('tricks/details.html.twig', [
             'title' => 'Tricks',
@@ -40,7 +44,7 @@ class Tricks extends AbstractController
     public function tricksAdd(TricksRepository $tricksRepository, Request $request, UtilitaireService $utilitaireService, UploadService $uploadService)
     {
 
-        if(!$this->isGranted('ROLE_USER')){
+        if (!$this->isGranted('ROLE_USER')) {
             $this->addFlash('error', "Vous n'avez pas accès à cette page");
             return $this->redirectToRoute('index');
         }
@@ -50,7 +54,7 @@ class Tricks extends AbstractController
         $form = $this->createForm(AddTricksType::class, $trick);
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
 
             $trick->setSlug($utilitaireService->makeSlug($trick->getName()));
@@ -61,9 +65,9 @@ class Tricks extends AbstractController
             $images = $request->files->get('add_tricks')['images'];
             $authorizedExt = ['png', 'jpg', 'jpeg', 'webp', 'avif', 'svg'];
 
-            foreach ($images as $image){
-                if (in_array($image->getClientOriginalExtension(), $authorizedExt) && $image->getSize() <= 500000){
-                    if($name = $uploadService->uploadTricks($trick->getSlug(), $image)){
+            foreach ($images as $image) {
+                if (in_array($image->getClientOriginalExtension(), $authorizedExt) && $image->getSize() <= 500000) {
+                    if ($name = $uploadService->uploadTricks($trick->getSlug(), $image)) {
                         $imageEntity = new Images();
 
                         $imageEntity->setTricks($trick);
@@ -74,7 +78,7 @@ class Tricks extends AbstractController
                 }
             }
 
-            foreach ($request->request->get('add_tricks')['videos'] as $video){
+            foreach ($request->request->get('add_tricks')['videos'] as $video) {
                 $videoEntity = new Video();
                 $videoEntity->setTricks($trick);
                 $videoEntity->setLink($video['link']);
@@ -84,12 +88,57 @@ class Tricks extends AbstractController
             $em->flush();
 
             $this->addFlash('success', 'Trick ajouté avec succès');
-            return $this->redirectToRoute('index', ['tricksPage'=> 'tricks']);
+            return $this->redirectToRoute('index', ['tricksPage' => 'tricks']);
         }
 
         return $this->render('tricks/add.html.twig', [
             'title' => 'Ajouter un tricks',
             'form' => $form->createView()
+        ]);
+    }
+
+
+    /**
+     * @Route("/tricks/supprimer/{slug}", name="tricksDelete")
+     */
+    public function tricksDelete(TricksRepository $tricksRepository, $slug)
+    {
+
+        if (!$this->isGranted('ROLE_USER')) {
+            $this->addFlash('error', "Vous n'avez pas accès à cette page");
+            return $this->redirectToRoute('index');
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $trick = $tricksRepository->findOneBy(['slug' => $slug]);
+
+        $trick->setDeletedAt(new \DateTime());
+        $em->persist($trick);
+        $em->flush();
+
+        $this->addFlash('success', 'Trick supprimé avec succès.');
+        return $this->redirectToRoute('index', ['tricksPage' => 'tricks']);
+    }
+
+    /**
+     * @Route("/tricks/list", name="tricksList")
+     */
+    public function tricksList(
+        TricksRepository $tricksRepository,
+        Request $request
+    )
+    {
+
+        $start = $request->request->get('start');
+        $number = $request->request->get('number');
+
+        $start = $start - 1;
+
+        $tricks = $tricksRepository->findBetweenStartAndEnd($start, $number);
+
+        return $this->render('tricks/list.html.twig', [
+            'title' => 'Tricks',
+            'tricks' => $tricks
         ]);
     }
 }
