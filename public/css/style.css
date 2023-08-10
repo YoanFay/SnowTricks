@@ -32,12 +32,6 @@ main {
   display: none;
 }
 
-#listTricks {
-  overflow-y: scroll;
-  height: 80%;
-  width: 80%;
-}
-
 #arrowDownward, #arrowUpward {
   font-weight: bold;
   font-size: xxx-large;

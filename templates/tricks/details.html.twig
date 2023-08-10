@@ -4,10 +4,19 @@
 
     <div class="background d-flex justify-content-center">
         <div class="col-6 card m-4">
-            <div class="card-header">
+            <div class="card-header col-12 d-flex flex-row">
+                <div class="col-8">
                 <h2>{{ trick.name }} ({{ trick.category.name }})</h2>
                 <small>Fiche créer le {{ trick.createdAt|dateH }}
                     par {{ trick.user.login }}</small>
+                </div>
+                <div class="d-flex justify-content-end align-items-center col-4">
+                    {% if app.user %}
+                        <span class="material-symbols-outlined cursor-click">edit</span>
+                        <span onclick="deleteTricks('{{ trick.name }}', '{{ path('tricksDelete', {'slug': trick.slug}) }}')"
+                              class="material-symbols-outlined cursor-click">delete</span>
+                    {% endif %}
+                </div>
             </div>
             <div class="card-body">
                 <div class="d-flex align-items-center flex-column mb-4">
@@ -69,6 +78,14 @@
 
         function loadEmbed(url) {
             $('#imgPrincipale').html('<iframe id="selectMedia" src="' + url + '"></iframe>')
+        }
+
+        function deleteTricks(name, url) {
+
+            if (confirm("Voulez-vous vraiment supprimer le trick : " + name + " ?")) {
+                window.location.href = url;
+            }
+
         }
 
     </script>

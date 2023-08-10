@@ -13,7 +13,7 @@ class Homepage extends AbstractController{
      */
     public function index(TricksRepository $tricksRepository, $tricksPage = null){
 
-        $tricks = $tricksRepository->findAll();
+        $tricks = $tricksRepository->findBy(['deleted_at' => null]);
 
         if ($tricksPage === null){
             $title = "Accueil";
