@@ -1,0 +1,134 @@
+{% extends 'layout/menu.html.twig' %}
+
+{% block main %}
+
+    <div class="background d-flex justify-content-center">
+        <div class="col-6 card m-4">
+            {{ form_start(form) }}
+            <div class="card-header col-12 d-flex flex-row">
+                <div class="col-8">
+                    <h2>{{ form_widget(form.name) }} ({{ form_widget(form.category) }})</h2>
+                </div>
+                {{ form_errors(form.name) }}
+                {{ form_errors(form.category) }}
+            </div>
+            <div class="card-body">
+                <div>
+                    {% if trick.images != null %}
+                        <div id="galery" class="d-flex flex-row mt-2 mx-2 w-100">
+                            {% for image in trick.images %}
+                                <img class="w-25"
+                                     src="/img/Tricks/{{ trick.slug }}/{{ image.name }}.{{ image.type }}"
+                                     onclick="changeImg('/img/Tricks/{{ trick.slug }}/{{ image.name }}.{{ image.type }}')">
+                            {% endfor %}
+                        </div>
+                        <hr>
+                    {% endif %}
+                    <div>
+                        <p class="h3">Description :</p>
+                        {{ form_widget(form.description) }}
+                        {{ form_errors(form.description) }}
+                    </div>
+                </div>
+                <hr>
+                <div class="col-12">
+                    <div class="col-8" id="video"
+                         data-prototype="{{ form_widget(form.videos.vars.prototype)|e('html_attr') }}">
+                        {{ form_row(form.videos) }}
+                        <button class="btn btn-secondary" id="add-video">Ajouter une vidéo</button>
+                    </div>
+                    <div class="col-8" id="image"
+                         data-prototype="{{ form_widget(form.images.vars.prototype)|e('html_attr') }}">
+                        {{ form_row(form.images) }}
+                        <button class="btn btn-secondary" id="add-image">Ajouter une images</button>
+                    </div>
+                </div>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+{% endblock %}
+
+
+{% block scripts %}
+    {{ parent() }}
+
+    <script>
+
+        $(document).ready(function () {
+            var videoContainer = $('div#video');
+            var countVideo = videoContainer.children().length;
+
+            $('button#add-video').click(function (e) {
+                addVideo(videoContainer);
+                e.preventDefault();
+            });
+
+            videoContainer.on('click', 'button.delete-video', function (e) {
+                var id = $(this).attr('id')
+                deleteVideo(id.replace('deleteVideo', ''));
+                e.preventDefault();
+            });
+
+            function addVideo(videoContainer) {
+                var prototype = videoContainer.data('prototype');
+                var newForm = prototype.replace(/__name__/g, countVideo);
+                var newVideo = $(newForm);
+                addDeleteVideoButton(newVideo);
+                videoContainer.append(newVideo);
+                countVideo++;
+            }
+
+            function addDeleteVideoButton(video) {
+                var deleteButton = $('<button id="deleteVideo' + countVideo + '" class="delete-video btn btn-danger">Supprimer</button>');
+                video.append(deleteButton);
+            }
+
+            function deleteVideo(number) {
+                var video = $('#edit_tricks_videos_' + number);
+                video.remove();
+            }
+
+            {% for video in trick.videos %}
+            addVideo(videoContainer);
+            $('#edit_tricks_videos_' + (parseInt(countVideo) - 1) + '_link').val("{{ video.link }}")
+            {% endfor %}
+
+            var imageContainer = $('div#image');
+            var countImage = imageContainer.children().length;
+
+            $('button#add-image').click(function (e) {
+                addImage(imageContainer);
+                e.preventDefault();
+            });
+
+            imageContainer.on('click', 'button.delete-image', function (e) {
+                var id = $(this).attr('id')
+                deleteImage(id.replace('deleteImage', ''));
+                e.preventDefault();
+            });
+
+            function addImage(imageContainer) {
+                var prototype = imageContainer.data('prototype');
+                var newForm = prototype.replace(/__name__/g, countImage);
+                var newImage = $(newForm);
+                addDeleteImageButton(newImage);
+                imageContainer.append(newImage);
+                countImage++;
+            }
+
+            function addDeleteImageButton(image) {
+                var deleteButton = $('<button id="deleteImage' + countImage + '" class="delete-image btn btn-danger">Supprimer</button>');
+                image.append(deleteButton);
+            }
+
+            function deleteImage(number) {
+                var image = $('#edit_tricks_images_' + number);
+                image.remove();
+            }
+        });
+
+    </script>
+
+{% endblock %}

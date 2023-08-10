@@ -6,13 +6,20 @@
         <div class="col-6 card m-4">
             <div class="card-header col-12 d-flex flex-row">
                 <div class="col-8">
-                <h2>{{ trick.name }} ({{ trick.category.name }})</h2>
-                <small>Fiche créer le {{ trick.createdAt|dateH }}
-                    par {{ trick.user.login }}</small>
+                    <h2>{{ trick.name }} ({{ trick.category.name }})</h2>
+                    {% if lastEdit %}
+                        <small>Fiche modifier le {{ lastEdit.updatedAt|dateH }}
+                            par {{ lastEdit.updatedBy.login }}</small>
+                    {% else %}
+                        <small>Fiche créer le {{ trick.createdAt|dateH }}
+                            par {{ trick.user.login }}</small>
+                    {% endif %}
                 </div>
                 <div class="d-flex justify-content-end align-items-center col-4">
                     {% if app.user %}
-                        <span class="material-symbols-outlined cursor-click">edit</span>
+                        <a class="text-decoration-none text-dark d-flex align-items-center"
+                           href="{{ path('tricksEdit', {'slug': trick.slug}) }}"><span
+                                    class="material-symbols-outlined cursor-click">edit</span></a>
                         <span onclick="deleteTricks('{{ trick.name }}', '{{ path('tricksDelete', {'slug': trick.slug}) }}')"
                               class="material-symbols-outlined cursor-click">delete</span>
                     {% endif %}
@@ -37,11 +44,11 @@
                         {% endfor %}
                         {% for video in trick.videos %}
                             <img class="w-25" onclick="loadEmbed('{{ video.link }}')"
-                            {% if 'youtube' in video.link %}
-                                src="http://i1.ytimg.com/vi/{{ video.link|replace({'https://www.youtube.com/embed/' : ''}) }}/default.jpg"
-                            {% elseif 'dailymotion' in video.link %}
-                                src="https://www.dailymotion.com/thumbnail/160x120/video/{{ video.link|replace({'https://www.dailymotion.com/embed/video/' : ''}) }}"
-                            {% endif %}
+                                    {% if 'youtube' in video.link %}
+                                        src="http://i1.ytimg.com/vi/{{ video.link|replace({'https://www.youtube.com/embed/' : ''}) }}/default.jpg"
+                                    {% elseif 'dailymotion' in video.link %}
+                                        src="https://www.dailymotion.com/thumbnail/160x120/video/{{ video.link|replace({'https://www.dailymotion.com/embed/video/' : ''}) }}"
+                                    {% endif %}
                                  alt="miniature"/>
                         {% endfor %}
                     </div>
