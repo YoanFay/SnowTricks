@@ -2,10 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\Commentaire;
 use App\Entity\Images;
 use App\Entity\Tricks as TricksEntity;
 use App\Entity\Video;
+use App\Form\CommentaireType;
 use App\Form\Tricks\AddTricksType;
+use App\Repository\CommentaireRepository;
 use App\Repository\TricksRepository;
 use App\Service\UploadService;
 use App\Service\UtilitaireService;
@@ -22,18 +25,44 @@ class Tricks extends AbstractController
      */
     public function tricksDetails(
         TricksRepository $tricksRepository,
+        CommentaireRepository $commentaireRepository,
+        Request          $request,
                          $slug
     )
     {
+
         $trick = $tricksRepository->findOneBy(['slug' => $slug, 'deleted_at' => null]);
 
-        if (!$trick){
+        if (!$trick) {
             throw $this->createNotFoundException();
         }
 
+        $commentaire = new Commentaire();
+
+        $form = $this->createForm(CommentaireType::class, $commentaire);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $em = $this->getDoctrine()->getManager();
+
+            $commentaire->setCreatedAt(new \DateTime());
+            $commentaire->setTricks($trick);
+            $commentaire->setUser($this->getUser());
+
+            $em->persist($commentaire);
+            $em->flush();
+
+            return $this->redirectToRoute('tricksDetails', ['slug' => $slug]);
+
+        }
+
+        $tricksCommentaires = $commentaireRepository->findBy(['tricks' => $trick], ['createdAt' => 'DESC']);
+
         return $this->render('tricks/details.html.twig', [
             'title' => 'Tricks',
-            'trick' => $trick
+            'trick' => $trick,
+            'commentaires' => $tricksCommentaires,
+            'form' => $form->createView(),
         ]);
     }
 
@@ -120,12 +149,13 @@ class Tricks extends AbstractController
         return $this->redirectToRoute('index', ['tricksPage' => 'tricks']);
     }
 
+
     /**
      * @Route("/tricks/list", name="tricksList")
      */
     public function tricksList(
         TricksRepository $tricksRepository,
-        Request $request
+        Request          $request
     )
     {
 

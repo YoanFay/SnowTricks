@@ -22,12 +22,12 @@ class Commentaire
      * @ORM\Column(type="string", length=255)
 
     /**
-     * @ORM\Column(type="string", length=45)
+     * @ORM\Column(type="string", length=255)
      * @Assert\Length(
      *     min = 3,
      *     max = 255,
-     *     minMessage = "Cette valeur est trop courte. Elle doit comporter {{ limit }} caractères ou plus.",
-     *     maxMessage = "Cette valeur est trop longue. Elle doit comporter {{ limit }} caractères ou moins."
+     *     minMessage = "Ce commentaire est trop court. Il doit comporter {{ limit }} caractères ou plus.",
+     *     maxMessage = "Ce commentaire est trop long. Il doit comporter {{ limit }} caractères ou moins."
      *     )
      * @Assert\NotNull(
      *     message = "Le commentaire ne peut pas être vide"

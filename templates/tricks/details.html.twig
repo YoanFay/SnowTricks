@@ -6,9 +6,9 @@
         <div class="col-6 card m-4">
             <div class="card-header col-12 d-flex flex-row">
                 <div class="col-8">
-                <h2>{{ trick.name }} ({{ trick.category.name }})</h2>
-                <small>Fiche créer le {{ trick.createdAt|dateH }}
-                    par {{ trick.user.login }}</small>
+                    <h2>{{ trick.name }} ({{ trick.category.name }})</h2>
+                    <small>Fiche créer le {{ trick.createdAt|dateH }}
+                        par {{ trick.user.login }}</small>
                 </div>
                 <div class="d-flex justify-content-end align-items-center col-4">
                     {% if app.user %}
@@ -37,11 +37,11 @@
                         {% endfor %}
                         {% for video in trick.videos %}
                             <img class="w-25" onclick="loadEmbed('{{ video.link }}')"
-                            {% if 'youtube' in video.link %}
-                                src="http://i1.ytimg.com/vi/{{ video.link|replace({'https://www.youtube.com/embed/' : ''}) }}/default.jpg"
-                            {% elseif 'dailymotion' in video.link %}
-                                src="https://www.dailymotion.com/thumbnail/160x120/video/{{ video.link|replace({'https://www.dailymotion.com/embed/video/' : ''}) }}"
-                            {% endif %}
+                                    {% if 'youtube' in video.link %}
+                                        src="http://i1.ytimg.com/vi/{{ video.link|replace({'https://www.youtube.com/embed/' : ''}) }}/default.jpg"
+                                    {% elseif 'dailymotion' in video.link %}
+                                        src="https://www.dailymotion.com/thumbnail/160x120/video/{{ video.link|replace({'https://www.dailymotion.com/embed/video/' : ''}) }}"
+                                    {% endif %}
                                  alt="miniature"/>
                         {% endfor %}
                     </div>
@@ -57,7 +57,36 @@
                 <div>
                     <div>
                         <p class="h3">Commentaire :</p>
-                        <img src="/img/construct.jpg" class="w-50">
+                        {% if app.user %}
+
+                            {{ form_start(form) }}
+
+                        {% else %}
+
+                            {{ form_start(form, { 'attr': {'class': 'd-none'} }) }}
+
+                        {% endif %}
+
+                        {{ form_label(form.message) }}
+                        {{ form_widget(form.message) }}
+                        {{ form_errors(form.message) }}
+
+                        {{ form_end(form) }}
+
+                        <div>
+                            {% for commentaire in commentaires %}
+                                <div class="card border-dark my-2 p-2">
+                                    <p class="m-0">
+                                        <img src="/img/avatar.png" class="avatar me-2">
+                                        {{commentaire.message}}
+                                    </p>
+                                    <p class="m-0 d-flex flex-row-reverse">
+                                        Déposé le {{commentaire.createdAt|dateH}} par {{commentaire.user.login}}
+                                    </p>
+                                </div>
+                            {% endfor %}
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -87,6 +116,14 @@
             }
 
         }
+
+        function textAreaAdjust(element) {
+            element.style.height = 'auto';
+            if (element.scrollHeight + 2 > 25) {
+                element.style.height = (element.scrollHeight + 2) + "px";
+            }
+        }
+
 
     </script>
 
