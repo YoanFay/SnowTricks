@@ -3,12 +3,16 @@
 namespace App\Controller;
 
 use App\Entity\EditTricks;
+use App\Entity\Commentaire;
 use App\Entity\Images;
 use App\Entity\Tricks as TricksEntity;
 use App\Entity\Video;
+use App\Form\CommentaireType;
 use App\Form\Tricks\AddTricksType;
 use App\Form\Tricks\EditTricksType;
 use App\Repository\EditTricksRepository;
+use App\Repository\CommentaireRepository;
+use App\Repository\ImagesRepository;
 use App\Repository\TricksRepository;
 use App\Repository\VideoRepository;
 use App\Service\UploadService;
@@ -25,13 +29,20 @@ class Tricks extends AbstractController
      * @Route("/tricks/details/{slug}", name="tricksDetails")
      */
     public function tricksDetails(
-        TricksRepository     $tricksRepository,
-        EditTricksRepository $editTricksRepository,
-                             $slug
+        TricksRepository      $tricksRepository,
+        CommentaireRepository $commentaireRepository,
+        EditTricksRepository  $editTricksRepository,
+        ImagesRepository      $imagesRepository,
+        Request               $request,
+                              $slug
     )
     {
 
         $trick = $tricksRepository->findOneBy(['slug' => $slug, 'deleted_at' => null]);
+
+        if (!$trick) {
+            throw $this->createNotFoundException();
+        }
 
         $lastEdit = $editTricksRepository->findLastEdit($trick);
 
@@ -41,14 +52,36 @@ class Tricks extends AbstractController
             $lastEdit = null;
         }
 
-        if (!$trick) {
-            throw $this->createNotFoundException();
+        $commentaire = new Commentaire();
+
+        $form = $this->createForm(CommentaireType::class, $commentaire);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+
+            $commentaire->setCreatedAt(new \DateTime());
+            $commentaire->setTricks($trick);
+            $commentaire->setUser($this->getUser());
+
+            $em->persist($commentaire);
+            $em->flush();
+
+            return $this->redirectToRoute('tricksDetails', ['slug' => $slug]);
+
         }
+
+        $tricksCommentaires = $commentaireRepository->findBy(['tricks' => $trick], ['createdAt' => 'DESC']);
+
+        $mainImage = $imagesRepository->findOneBy(['tricks' => $trick, 'main' => true]);
 
         return $this->render('tricks/details.html.twig', [
             'title' => 'Tricks',
             'trick' => $trick,
-            'lastEdit' => $lastEdit
+            'lastEdit' => $lastEdit,
+            'commentaires' => $tricksCommentaires,
+            'form' => $form->createView(),
+            'mainImage' => $mainImage
         ]);
     }
 
@@ -77,34 +110,39 @@ class Tricks extends AbstractController
 
             $em->persist($trick);
 
-            $images = $request->files->get('add_tricks')['images'];
-            $authorizedExt = ['png', 'jpg', 'jpeg', 'webp', 'avif', 'svg'];
+            if (isset($request->files->get('add_tricks')['images'])) {
+                $authorizedExt = ['png', 'jpg', 'jpeg', 'webp', 'avif', 'svg'];
+                foreach ($request->files->get('add_tricks')['images'] as $key => $image) {
+                    $image = $image['images'];
+                    if ($image) {
+                        if (in_array($image->getClientOriginalExtension(), $authorizedExt) && $image->getSize() <= 500000) {
+                            if ($name = $uploadService->uploadTricks($trick->getSlug(), $image)) {
+                                $imageEntity = new Images();
 
-            $firstImage = true;
+                                $imageEntity->setTricks($trick);
+                                $imageEntity->setName($name);
+                                $imageEntity->setType($image->getClientOriginalExtension());
 
-            foreach ($images as $image) {
-                if (in_array($image->getClientOriginalExtension(), $authorizedExt) && $image->getSize() <= 500000) {
-                    if ($name = $uploadService->uploadTricks($trick->getSlug(), $image)) {
-                        $imageEntity = new Images();
+                                if (isset($request->request->get('add_tricks')['images'][$key])) {
+                                    if ($request->request->get('add_tricks')['images'][$key]['main']) {
+                                        $imageEntity->setMain(true);
+                                    }
+                                }
 
-                        if ($firstImage) {
-                            $imageEntity->setMain(true);
-                            $firstImage = false;
+                                $em->persist($imageEntity);
+                            }
                         }
-
-                        $imageEntity->setTricks($trick);
-                        $imageEntity->setName($name);
-                        $imageEntity->setType($image->getClientOriginalExtension());
-                        $em->persist($imageEntity);
                     }
                 }
             }
-
-            foreach ($request->request->get('add_tricks')['videos'] as $video) {
-                $videoEntity = new Video();
-                $videoEntity->setTricks($trick);
-                $videoEntity->setLink($video['link']);
-                $em->persist($videoEntity);
+            
+            if (isset($request->request->get('add_tricks')['videos'])){
+                foreach ($request->request->get('add_tricks')['videos'] as $video) {
+                    $videoEntity = new Video();
+                    $videoEntity->setTricks($trick);
+                    $videoEntity->setLink($video['link']);
+                    $em->persist($videoEntity);
+                }
             }
 
             $em->flush();
@@ -128,6 +166,8 @@ class Tricks extends AbstractController
         UtilitaireService $utilitaireService,
         VideoRepository   $videoRepository,
         Request           $request,
+        UploadService     $uploadService,
+        ImagesRepository  $imagesRepository,
                           $slug
     )
     {
@@ -158,28 +198,69 @@ class Tricks extends AbstractController
 
             $tricksVideos = $videoRepository->findBy(['tricks' => $trick]);
 
-            $videos = $request->request->get('edit_tricks')['videos'];
+            if (isset($request->request->get('edit_tricks')['videos'])) {
+                $videos = $request->request->get('edit_tricks')['videos'];
 
-            foreach ($tricksVideos as $tricksVideo) {
-                foreach ($videos as $key => $video) {
-                    if ($video['link'] === $tricksVideo->getLink()) {
-                        break;
+                foreach ($tricksVideos as $tricksVideo) {
+                    foreach ($videos as $key => $video) {
+                        if ($video['link'] === $tricksVideo->getLink()) {
+                            break;
+                        }
+                        $em->remove($tricksVideo);
+                        unset($video);
                     }
-                    $em->remove($tricksVideo);
-                    unset($video);
+                }
+
+                foreach ($request->request->get('edit_tricks')['videos'] as $video) {
+
+                    $videoEntity = $videoRepository->findOneBy(['tricks' => $trick, 'link' => $video['link']]);
+
+                    if ($videoEntity === null and $video['link'] !== null and $video['link'] !== "") {
+                        $videoEntity = new Video();
+                        $videoEntity->setTricks($trick);
+                        $videoEntity->setLink($video['link']);
+
+                        $em->persist($videoEntity);
+                    }
                 }
             }
 
-            foreach ($request->request->get('edit_tricks')['videos'] as $video) {
+            $count = $imagesRepository->countImage($trick)[0][1];
 
-                $videoEntity = $videoRepository->findOneBy(['tricks' => $trick, 'link' => $video['link']]);
+            if (isset($request->files->get('edit_tricks')['images'])) {
+                $authorizedExt = ['png', 'jpg', 'jpeg', 'webp', 'avif', 'svg'];
+                foreach ($request->files->get('edit_tricks')['images'] as $key => $image) {
+                    $image = $image['images'];
+                    if ($image) {
+                        if (in_array($image->getClientOriginalExtension(), $authorizedExt) && $image->getSize() <= 500000) {
+                            if ($name = $uploadService->uploadTricks($trick->getSlug(), $image)) {
+                                $imageEntity = new Images();
 
-                if ($videoEntity === null and $video['link'] !== null and $video['link'] !== ""){
-                    $videoEntity = new Video();
-                    $videoEntity->setTricks($trick);
-                    $videoEntity->setLink($video['link']);
+                                $imageEntity->setTricks($trick);
+                                $imageEntity->setName($name);
+                                $imageEntity->setType($image->getClientOriginalExtension());
 
-                    $em->persist($videoEntity);
+                                if (isset($request->request->get('edit_tricks')['images'][$key])) {
+                                    if ($request->request->get('edit_tricks')['images'][$key]['main']) {
+
+                                        $mainImage = $imagesRepository->findOneBy(['tricks' => $trick, 'main' => true]);
+
+                                        $mainImage->setMain(false);
+                                        $em->persist($mainImage);
+
+                                        $imageEntity->setMain(true);
+                                    }
+                                }
+
+                                if ($count === 0){
+                                    $imageEntity->setMain(true);
+                                    $count++;
+                                }
+
+                                $em->persist($imageEntity);
+                            }
+                        }
+                    }
                 }
             }
 
@@ -236,6 +317,7 @@ class Tricks extends AbstractController
      */
     public function tricksList(
         TricksRepository $tricksRepository,
+        ImagesRepository $imagesRepository,
         Request          $request
     )
     {

@@ -29,8 +29,8 @@
                 <div class="d-flex align-items-center flex-column mb-4">
                     <div id="imgPrincipale">
                         <img id="selectMedia"
-                                {% if trick.images.values[0] is defined %}
-                                    src="/img/Tricks/{{ trick.slug }}/{{ trick.images.values[0].name }}.{{ trick.images.values[0].type }}"
+                                {% if mainImage != null %}
+                                    src="/img/Tricks/{{ trick.slug }}/{{ mainImage.name }}.{{ mainImage.type }}"
                                 {% else %}
                                     src="/img/noImg.png"
                                 {% endif %}
@@ -64,7 +64,36 @@
                 <div>
                     <div>
                         <p class="h3">Commentaire :</p>
-                        <img src="/img/construct.jpg" class="w-50">
+                        {% if app.user %}
+
+                            {{ form_start(form) }}
+
+                        {% else %}
+
+                            {{ form_start(form, { 'attr': {'class': 'd-none'} }) }}
+
+                        {% endif %}
+
+                        {{ form_label(form.message) }}
+                        {{ form_widget(form.message) }}
+                        {{ form_errors(form.message) }}
+
+                        {{ form_end(form) }}
+
+                        <div>
+                            {% for commentaire in commentaires %}
+                                <div class="card border-dark my-2 p-2">
+                                    <p class="m-0">
+                                        <img src="/img/avatar.png" class="avatar me-2">
+                                        {{commentaire.message}}
+                                    </p>
+                                    <p class="m-0 d-flex flex-row-reverse">
+                                        Déposé le {{commentaire.createdAt|dateH}} par {{commentaire.user.login}}
+                                    </p>
+                                </div>
+                            {% endfor %}
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -94,6 +123,14 @@
             }
 
         }
+
+        function textAreaAdjust(element) {
+            element.style.height = 'auto';
+            if (element.scrollHeight + 2 > 25) {
+                element.style.height = (element.scrollHeight + 2) + "px";
+            }
+        }
+
 
     </script>
 

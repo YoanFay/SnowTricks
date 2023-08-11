@@ -17,9 +17,21 @@
                     {% if trick.images != null %}
                         <div id="galery" class="d-flex flex-row mt-2 mx-2 w-100">
                             {% for image in trick.images %}
-                                <img class="w-25"
-                                     src="/img/Tricks/{{ trick.slug }}/{{ image.name }}.{{ image.type }}"
-                                     onclick="changeImg('/img/Tricks/{{ trick.slug }}/{{ image.name }}.{{ image.type }}')">
+                                <div class="w-25 d-flex flex-column justify-content-between" id="image-{{ image.id }}">
+                                    <div class="w-100 image-container">
+                                        <img class="w-100"
+                                             src="/img/Tricks/{{ trick.slug }}/{{ image.name }}.{{ image.type }}"
+                                        >
+                                        <div class="overlay" onclick="deleteImageAjax({{ image.id }})">
+                                            <span class="material-symbols-outlined cursor-click">delete</span>
+                                        </div>
+                                    </div>
+                                    <div id="btnDefault-{{ image.id }}" class="d-flex justify-content-center btnImageDefault {% if image.main %}d-none{% endif %}">
+                                        <button class="btn btn-secondary w-75" onclick="setMainImage({{ image.id }})">
+                                            Définir comme image par défaut
+                                        </button>
+                                    </div>
+                                </div>
                             {% endfor %}
                         </div>
                         <hr>
@@ -31,13 +43,13 @@
                     </div>
                 </div>
                 <hr>
-                <div class="col-12">
-                    <div class="col-8" id="video"
+                <div class="col-12 d-flex">
+                    <div class="col-5 border-right pe-2" id="video"
                          data-prototype="{{ form_widget(form.videos.vars.prototype)|e('html_attr') }}">
                         {{ form_row(form.videos) }}
                         <button class="btn btn-secondary" id="add-video">Ajouter une vidéo</button>
                     </div>
-                    <div class="col-8" id="image"
+                    <div class="col-5 border-left ps-2" id="image"
                          data-prototype="{{ form_widget(form.images.vars.prototype)|e('html_attr') }}">
                         {{ form_row(form.images) }}
                         <button class="btn btn-secondary" id="add-image">Ajouter une images</button>
@@ -57,6 +69,9 @@
     <script>
 
         $(document).ready(function () {
+
+            {# VIDEO #}
+
             var videoContainer = $('div#video');
             var countVideo = videoContainer.children().length;
 
@@ -95,11 +110,20 @@
             $('#edit_tricks_videos_' + (parseInt(countVideo) - 1) + '_link').val("{{ video.link }}")
             {% endfor %}
 
+            {# IMAGE #}
+
             var imageContainer = $('div#image');
             var countImage = imageContainer.children().length;
 
             $('button#add-image').click(function (e) {
                 addImage(imageContainer);
+
+                $('input[type="checkbox"]').on('change', function() {
+                    if ($(this).is(':checked')) {
+                        $('input[type="checkbox"]').not(this).prop('checked', false);
+                    }
+                });
+
                 e.preventDefault();
             });
 
@@ -128,6 +152,52 @@
                 image.remove();
             }
         });
+
+        function deleteImageAjax(id) {
+            if (confirm("Voulez-vous vraiment supprimer cette image ? (Cette action est définitive)")) {
+                $.ajax({
+                    url: '{{ path('imageDelete') }}',
+                    method: "POST",
+                    data: {
+                        'id': id
+                    },
+                    success: function (data) {
+                        if (data['result']) {
+                            $('#image-' + id).addClass('d-none');
+                            alert("Image supprimée avec succès.");
+                        } else {
+                            alert("L'image n'a pas pu être supprimée.");
+                        }
+                    }
+                });
+            }
+        }
+
+        function setMainImage(id, e) {
+            event.preventDefault()
+            if (confirm("Voulez-vous vraiment définir cette image comme image principale ?")) {
+                $.ajax({
+                    url: '{{ path('imageDefault') }}',
+                    method: "POST",
+                    data: {
+                        'id': id
+                    },
+                    success: function (data) {
+                        if (data['result']) {
+
+                            $('.btnImageDefault').each(function (){
+                                $( this ).removeClass('d-none')
+                            })
+
+                            $('#btnDefault-' + id).addClass('d-none');
+                            alert("Image définie comme image principale avec succès.");
+                        } else {
+                            alert("L'image n'a pas pu être définie comme image principale.");
+                        }
+                    }
+                });
+            }
+        }
 
     </script>
 

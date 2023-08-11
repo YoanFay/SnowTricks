@@ -39,6 +39,19 @@ class ImagesRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+     * @return Images[] Returns an array of Images objects
+     */
+    public function countImage($tricks)
+    {
+        return $this->createQueryBuilder('i')
+            ->select('COUNT(i.id)')
+            ->andWhere('i.tricks = :tricks')
+            ->setParameter('tricks', $tricks)
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return Images[] Returns an array of Images objects
 //     */

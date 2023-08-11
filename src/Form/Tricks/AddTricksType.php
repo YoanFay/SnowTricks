@@ -4,6 +4,7 @@ namespace App\Form\Tricks;
 
 use App\Entity\Categories;
 use App\Entity\Tricks;
+use App\Form\ImagesType;
 use App\Form\VideoType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -32,11 +33,12 @@ class AddTricksType extends AbstractType
                 'choice_label' => 'name',
                 'label' => "Catégorie"
             ])
-            ->add('images', FileType::class, [
-                'label' => 'Images',
-                'multiple' => true,
-                'required' => false,
+            ->add('images', CollectionType::class, [
+                'entry_type' => ImagesType::class,
                 'mapped' => false,
+                'required' => false,
+                'allow_add' => true,
+                'allow_delete' => true
             ])
             ->add('videos', CollectionType::class, [
                 'entry_type' => VideoType::class,

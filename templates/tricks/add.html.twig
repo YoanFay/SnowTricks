@@ -14,11 +14,13 @@
             {{ form_label(form.category) }}
             {{ form_widget(form.category, { 'attr': { 'class' : 'form-control mb-3 mt-1' } }) }}
             {{ form_errors(form.category) }}
-            {{ form_label(form.images) }}
-            {{ form_widget(form.images, { 'attr': { 'class' : 'form-control mb-3 mt-1' } }) }}
+            <div id="image" data-prototype="{{ form_widget(form.images.vars.prototype)|e('html_attr') }}">
+                {{ form_row(form.images) }}
+                <button class="btn btn-secondary" id="add-image">Ajouter une ligne</button>
+            </div>
             <div id="video" data-prototype="{{ form_widget(form.videos.vars.prototype)|e('html_attr') }}">
                 {{ form_row(form.videos) }}
-                <button class="btn btn-secondary" id="add-line">Ajouter une ligne</button>
+                <button class="btn btn-secondary" id="add-video">Ajouter une ligne</button>
             </div>
             <p id="imgError"></p>
             <p id="imgExt" class="text-error d-none">Les extensions acceptées sont : png, jpg, jpeg, webp, avif et svg</p>
@@ -33,63 +35,84 @@
 {% block scripts %}
 
     <script>
-        $('#add_tricks_images').change(function (){
-            var names = [];
-            var authorizedExt = ['png', 'jpg', 'jpeg', 'webp', 'avif', 'svg']
-            var error = "<ul class='d-flex flex-column'>"
-            for (var i = 0; i < $(this).get(0).files.length; ++i) {
-                var name = $(this).get(0).files[i].name.toLowerCase();
-                var extension = name.substr( (name.lastIndexOf('.') +1) );
-                if(jQuery.inArray(extension, authorizedExt) === -1){
-                    error = error + "<li>Le fichier " + name + " n'est pas autorisé</li>"
-                }
-                names.push(name);
-            }
-            error = error+"</ul>"
 
-            if (error !== "<ul class='d-flex flex-column'></ul>"){
-                $('#add_tricks_submit'). attr("disabled", true);
-                $('#imgError').html(error);
-                $('#imgExt').removeClass('d-none');
-            }else{
-                $('#add_tricks_submit'). attr("disabled", false);
-                $('#imgError').html('');
-                $('#imgExt').addClass('d-none');
-            }
-        });
+        $(document).ready(function () {
 
-        $(document).ready(function() {
-            var collectionContainer = $('div#video');
-            var count = collectionContainer.children().length;
+            {# IMAGE #}
 
-            $('button#add-line').click(function(e) {
-                addLine(collectionContainer);
+            var imageContainer = $('div#image');
+            var countImage = imageContainer.children().length;
+
+            $('button#add-image').click(function (e) {
+                addImage(imageContainer);
+
+                $('input[type="checkbox"]').on('change', function() {
+                    if ($(this).is(':checked')) {
+                        $('input[type="checkbox"]').not(this).prop('checked', false);
+                    }
+                });
+
                 e.preventDefault();
             });
 
-            collectionContainer.on('click', 'button.delete-line', function(e) {
+            imageContainer.on('click', 'button.delete-image', function (e) {
                 var id = $(this).attr('id')
-                deleteLine(id.replace('deleteLine', ''));
+                deleteImage(id.replace('deleteImage', ''));
                 e.preventDefault();
             });
 
-            function addLine(collectionContainer) {
-                var prototype = collectionContainer.data('prototype');
-                var newForm = prototype.replace(/__name__/g, count);
-                var newLine = $(newForm);
-                addDeleteButton(newLine);
-                collectionContainer.append(newLine);
-                count++;
+            function addImage(imageContainer) {
+                var prototype = imageContainer.data('prototype');
+                var newForm = prototype.replace(/__name__/g, countImage);
+                var newImage = $(newForm);
+                addDeleteImageButton(newImage);
+                imageContainer.append(newImage);
+                countImage++;
             }
 
-            function addDeleteButton(line) {
-                var deleteButton = $('<button id="deleteLine' + count + '" class="delete-line btn btn-danger">Supprimer</button>');
-                line.append(deleteButton);
+            function addDeleteImageButton(image) {
+                var deleteButton = $('<button id="deleteImage' + countImage + '" class="delete-image btn btn-danger">Supprimer</button>');
+                image.append(deleteButton);
             }
 
-            function deleteLine(number) {
-                var line = $('#add_tricks_videos_'+number);
-                line.remove();
+            function deleteImage(number) {
+                var image = $('#add_tricks_images_' + number);
+                image.remove();
+            }
+
+            {# VIDEO #}
+
+            var videoContainer = $('div#video');
+            var countVideo = videoContainer.children().length;
+
+            $('button#add-video').click(function (e) {
+                addVideo(videoContainer);
+                e.preventDefault();
+            });
+
+            videoContainer.on('click', 'button.delete-video', function (e) {
+                var id = $(this).attr('id')
+                deleteVideo(id.replace('deleteVideo', ''));
+                e.preventDefault();
+            });
+
+            function addVideo(videoContainer) {
+                var prototype = videoContainer.data('prototype');
+                var newForm = prototype.replace(/__name__/g, countVideo);
+                var newVideo = $(newForm);
+                addDeleteVideoButton(newVideo);
+                videoContainer.append(newVideo);
+                countVideo++;
+            }
+
+            function addDeleteVideoButton(video) {
+                var deleteButton = $('<button id="deleteVideo' + countVideo + '" class="delete-video btn btn-danger">Supprimer</button>');
+                video.append(deleteButton);
+            }
+
+            function deleteVideo(number) {
+                var video = $('#add_tricks_videos_' + number);
+                video.remove();
             }
         });
     </script>
