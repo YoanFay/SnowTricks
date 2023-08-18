@@ -16,22 +16,31 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class AddTricksType extends AbstractType
+class EditTricksType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
 
         $builder
             ->add('name', TextType::class, [
-                'label' => 'Nom du tricks'
+                'label' => 'Nom du tricks',
+                'attr' => [
+                    'class' => 'form-control d-inline w-50'
+                ]
             ])
             ->add('description', TextareaType::class, [
-                'label' => 'Description du tricks'
+                'label' => 'Description du tricks',
+                'attr' => [
+                    'class' => 'form-control'
+                ]
             ])
             ->add('category', EntityType::class, [
                 'class' => Categories::class,
                 'choice_label' => 'name',
-                'label' => "Catégorie"
+                'label' => "Catégorie",
+                'attr' => [
+                    'class' => 'form-control d-inline w-25'
+                ]
             ])
             ->add('images', CollectionType::class, [
                 'entry_type' => ImagesType::class,
@@ -48,7 +57,10 @@ class AddTricksType extends AbstractType
                 'allow_delete' => true,
             ])
             ->add('submit', SubmitType::class, [
-                'label' => "Envoyer"
+                'label' => "Modifier",
+                'attr' => [
+                    'class' => 'btn btn-primary m-3'
+                ]
             ]);
     }
 

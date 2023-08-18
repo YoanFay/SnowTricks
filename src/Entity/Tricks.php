@@ -64,11 +64,6 @@ class Tricks
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $updated_at;
-
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
     private $deleted_at;
 
     /**
@@ -98,12 +93,18 @@ class Tricks
      */
     private $videos;
 
+    /**
+     * @ORM\OneToMany(targetEntity=EditTricks::class, mappedBy="trick", orphanRemoval=true)
+     */
+    private $editTricks;
+
     public function __construct()
     {
         $this->setCreatedAt(new \DateTime());
         $this->commentaires = new ArrayCollection();
         $this->images = new ArrayCollection();
         $this->videos = new ArrayCollection();
+        $this->editTricks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -155,18 +156,6 @@ class Tricks
     public function setCreatedAt(\DateTimeInterface $created_at): self
     {
         $this->created_at = $created_at;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?\DateTimeInterface
-    {
-        return $this->updated_at;
-    }
-
-    public function setUpdatedAt(?\DateTimeInterface $updated_at): self
-    {
-        $this->updated_at = $updated_at;
 
         return $this;
     }
@@ -291,6 +280,36 @@ class Tricks
             // set the owning side to null (unless already changed)
             if ($video->getTricks() === $this) {
                 $video->setTricks(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, EditTricks>
+     */
+    public function getEditTricks(): Collection
+    {
+        return $this->editTricks;
+    }
+
+    public function addEditTrick(EditTricks $editTrick): self
+    {
+        if (!$this->editTricks->contains($editTrick)) {
+            $this->editTricks[] = $editTrick;
+            $editTrick->setTrick($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEditTrick(EditTricks $editTrick): self
+    {
+        if ($this->editTricks->removeElement($editTrick)) {
+            // set the owning side to null (unless already changed)
+            if ($editTrick->getTrick() === $this) {
+                $editTrick->setTrick(null);
             }
         }
 

@@ -93,7 +93,7 @@ ul li {
   border: 2px solid black;
 }
 
-#galery{
+#gallery{
   overflow-x: scroll;
 }
 
@@ -155,4 +155,45 @@ form ul li{
   padding: 5px;
   border: 1px solid black;
   border-radius: 100%;
+}
+
+.image-container {
+     display: inline-block;
+     position: relative;
+     overflow: hidden;
+   }
+
+.image-container img {
+  max-width: 100%;
+  height: auto;
+  transition: filter 0.3s ease-in-out;
+}
+
+.overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
+  background-color: rgba(255, 0, 0, 0.8);
+  border-radius: 50%;
+  padding: 10px;
+  cursor: pointer;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.image-container:hover img {
+  filter: brightness(0.5);
+}
+
+.image-container:hover .overlay {
+  display: block;
+}
+
+.border-right{
+  border-right: black 1px solid;
+}
+
+.border-left{
+  border-left: black 1px solid;
 }

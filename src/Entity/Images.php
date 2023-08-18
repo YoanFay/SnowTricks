@@ -33,6 +33,11 @@ class Images
      */
     private $tricks;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $main = false;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -70,6 +75,18 @@ class Images
     public function setTricks(?Tricks $tricks): self
     {
         $this->tricks = $tricks;
+
+        return $this;
+    }
+
+    public function isMain(): ?bool
+    {
+        return $this->main;
+    }
+
+    public function setMain(bool $main): self
+    {
+        $this->main = $main;
 
         return $this;
     }
