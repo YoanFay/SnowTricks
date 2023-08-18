@@ -80,18 +80,17 @@
 
                         {{ form_end(form) }}
 
-                        <div>
-                            {% for commentaire in commentaires %}
-                                <div class="card border-dark my-2 p-2">
-                                    <p class="m-0">
-                                        <img src="/img/avatar.png" class="avatar me-2">
-                                        {{commentaire.message}}
-                                    </p>
-                                    <p class="m-0 d-flex flex-row-reverse">
-                                        Déposé le {{commentaire.createdAt|dateH}} par {{commentaire.user.login}}
-                                    </p>
+                        <div id="listComment" data-id="1">
+                        </div>
+                        <div id="loadSpin" class="card-body py-1 py-lg-0">
+                            <div class="d-flex justify-content-center align-items-center">
+                                <div class="spinner-border" role="status">
+                                    <span class="sr-only"></span>
                                 </div>
-                            {% endfor %}
+                            </div>
+                        </div>
+                        <div class="w-100 d-flex justify-content-center">
+                            <button id="showMoreButton" class="btn btn-primary" data-number="">Voir plus de commentaire</button>
                         </div>
 
                     </div>
@@ -107,6 +106,10 @@
     {{ parent() }}
 
     <script>
+
+        $(document).ready(function() {
+            CommentList(1,10);
+        });
 
         function changeImg(url) {
             $('#imgPrincipale').html('<img id="selectMedia" src="' + url + '">');
@@ -130,6 +133,29 @@
                 element.style.height = (element.scrollHeight + 2) + "px";
             }
         }
+
+        function CommentList(start, number) {
+            $('#loadSpin').removeClass('d-none');
+            $('#showMoreButton').addClass('d-none');
+            $.ajax({
+                url: '{{ path('commentList', {'slug': slug}) }}',
+                method: "POST",
+                data: {
+                    'start': start,
+                    'number': number,
+                },
+                success: function (data) {
+                    $("#listComment").append(data);
+                    $('#loadSpin').addClass('d-none');
+                    $('#showMoreButton').removeClass('d-none').attr('data-number', parseInt(start) + parseInt(number));
+                }
+            });
+        }
+
+        $('#showMoreButton').on('click', function () {
+            let start = $('#showMoreButton').attr('data-number');
+            CommentList(start, 5)
+        });
 
 
     </script>

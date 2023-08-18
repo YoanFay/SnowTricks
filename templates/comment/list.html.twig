@@ -1,0 +1,11 @@
+{% for commentaire in commentaires %}
+    <div class="card border-dark my-2 p-2">
+        <p class="m-0">
+            <img src="/img/avatar.png" class="avatar me-2">
+            {{commentaire.message}}
+        </p>
+        <p class="m-0 d-flex flex-row-reverse">
+            Déposé le {{commentaire.createdAt|dateH}} par {{commentaire.user.login}}
+        </p>
+    </div>
+{% endfor %}

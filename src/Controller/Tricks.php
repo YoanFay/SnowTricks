@@ -81,7 +81,8 @@ class Tricks extends AbstractController
             'lastEdit' => $lastEdit,
             'commentaires' => $tricksCommentaires,
             'form' => $form->createView(),
-            'mainImage' => $mainImage
+            'mainImage' => $mainImage,
+            'slug' => $slug
         ]);
     }
 
