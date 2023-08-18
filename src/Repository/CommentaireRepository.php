@@ -39,6 +39,22 @@ class CommentaireRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+     * @return Commentaire[] Returns an array of Tricks objects
+     */
+    public function findBetweenStartAndEnd($trick, $start, $end): array
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.tricks = :trick')
+            ->setParameter('trick', $trick)
+            ->orderBy('c.createdAt', 'DESC')
+            ->setFirstResult($start)
+            ->setMaxResults($end)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
 //    /**
 //     * @return Commentaire[] Returns an array of Commentaire objects
 //     */
