@@ -15,7 +15,7 @@
             <div class="card-body">
                 <div>
                     {% if trick.images != null %}
-                        <div id="galery" class="d-flex flex-row mt-2 mx-2 w-100">
+                        <div id="gallery" class="d-flex flex-row mt-2 mx-2 w-100">
                             {% for image in trick.images %}
                                 <div class="w-25 d-flex flex-column justify-content-between" id="image-{{ image.id }}">
                                     <div class="w-100 image-container">
@@ -26,7 +26,8 @@
                                             <span class="material-symbols-outlined cursor-click">delete</span>
                                         </div>
                                     </div>
-                                    <div id="btnDefault-{{ image.id }}" class="d-flex justify-content-center btnImageDefault {% if image.main %}d-none{% endif %}">
+                                    <div id="btnDefault-{{ image.id }}"
+                                         class="d-flex justify-content-center btnImageDefault {% if image.main %}d-none{% endif %}">
                                         <button class="btn btn-secondary w-75" onclick="setMainImage({{ image.id }})">
                                             Définir comme image par défaut
                                         </button>
@@ -118,7 +119,7 @@
             $('button#add-image').click(function (e) {
                 addImage(imageContainer);
 
-                $('input[type="checkbox"]').on('change', function() {
+                $('input[type="checkbox"]').on('change', function () {
                     if ($(this).is(':checked')) {
                         $('input[type="checkbox"]').not(this).prop('checked', false);
                     }
@@ -185,8 +186,8 @@
                     success: function (data) {
                         if (data['result']) {
 
-                            $('.btnImageDefault').each(function (){
-                                $( this ).removeClass('d-none')
+                            $('.btnImageDefault').each(function () {
+                                $(this).removeClass('d-none')
                             })
 
                             $('#btnDefault-' + id).addClass('d-none');

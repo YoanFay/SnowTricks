@@ -93,7 +93,7 @@ ul li {
   border: 2px solid black;
 }
 
-#galery{
+#gallery{
   overflow-x: scroll;
 }
 
@@ -155,7 +155,9 @@ form ul li{
   padding: 5px;
   border: 1px solid black;
   border-radius: 100%;
-}  .image-container {
+}
+
+.image-container {
      display: inline-block;
      position: relative;
      overflow: hidden;
