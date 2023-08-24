@@ -22,7 +22,7 @@ class Homepage extends AbstractController{
             $title = "Tricks";
         }
 
-        return $this->render('homepage/list.html.twig', [
+        return $this->render('homepage/index.html.twig', [
             'title' => $title,
             'tricks' => $tricks,
             'tricksPage' => $tricksPage
