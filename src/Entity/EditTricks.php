@@ -66,9 +66,22 @@ class EditTricks
      */
     private $trick;
 
-    public function __construct()
+    public function __construct(Tricks $trick)
     {
         $this->setUpdatedAt(new \DateTime());
+        $this->setOldCategory($trick->getCategory());
+        $this->setOldDescription($trick->getDescription());
+        $this->setOldName($trick->getName());
+    }
+
+    public function newValue($trick, $user){
+
+        $this->setTrick($trick);
+        $this->setUpdatedBy($user);
+        $this->setNewCategory($trick->getCategory());
+        $this->setNewDescription($trick->getDescription());
+        $this->setNewName($trick->getName());
+
     }
 
     public function getId(): ?int

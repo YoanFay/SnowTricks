@@ -4,29 +4,30 @@ namespace App\Controller;
 
 use App\Repository\TricksRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class Homepage extends AbstractController{
+class Homepage extends AbstractController
+{
+
 
     /**
-     * @Route("/{tricksPage}", name="index")
+     * @param TricksRepository $tricksRepository parameter
+     *
+     * @return Response
+     *
+     * @Route("/", name="index")
      */
-    public function index(TricksRepository $tricksRepository, $tricksPage = null){
+    public function index(TricksRepository $tricksRepository): Response
+    {
 
         $tricks = $tricksRepository->findBy(['deleted_at' => null]);
 
-        if ($tricksPage === null){
-            $title = "Accueil";
-        }
-        else{
-            $title = "Tricks";
-        }
-
-        return $this->render('homepage/index.html.twig', [
-            'title' => $title,
-            'tricks' => $tricks,
-            'tricksPage' => $tricksPage
-        ]);
+        return $this->render(
+            'homepage/index.html.twig', [
+                'tricks' => $tricks
+            ]
+        );
     }
 
 }

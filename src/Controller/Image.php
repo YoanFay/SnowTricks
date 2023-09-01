@@ -5,20 +5,24 @@ namespace App\Controller;
 use App\Kernel;
 use App\Repository\ImagesRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class Image extends AbstractController
 {
 
+
     /**
+     * @param ImagesRepository $imagesRepository parameter
+     * @param Kernel           $kernel           parameter
+     * @param Request          $request          parameter
+     *
+     * @return JsonResponse
+     *
      * @Route("/image/supprimer", name="imageDelete")
      */
-    public function imageDelete(
-        ImagesRepository $imagesRepository,
-        Kernel           $kernel,
-        Request          $request
-    )
+    public function imageDelete(ImagesRepository $imagesRepository, Kernel $kernel, Request $request): JsonResponse
     {
 
         $em = $this->getDoctrine()->getManager();
@@ -61,13 +65,14 @@ class Image extends AbstractController
 
 
     /**
+     * @param ImagesRepository $imagesRepository parameter
+     * @param Request          $request          parameter
+     *
+     * @return JsonResponse
+     *
      * @Route("/image/defaut", name="imageDefault")
      */
-    public function imageDefault(
-        ImagesRepository $imagesRepository,
-        Kernel           $kernel,
-        Request          $request
-    )
+    public function imageDefault(ImagesRepository $imagesRepository, Request $request): JsonResponse
     {
 
         $em = $this->getDoctrine()->getManager();

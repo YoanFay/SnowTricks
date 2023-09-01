@@ -27,25 +27,18 @@ class Tricks extends AbstractController
 
 
     /**
-     * @param TricksRepository      $tricksRepository
-     * @param CommentaireRepository $commentaireRepository
-     * @param EditTricksRepository  $editTricksRepository
-     * @param ImagesRepository      $imagesRepository
-     * @param Request               $request
-     * @param                       $slug
+     * @param TricksRepository      $tricksRepository      parameter
+     * @param CommentaireRepository $commentaireRepository parameter
+     * @param EditTricksRepository  $editTricksRepository  parameter
+     * @param ImagesRepository      $imagesRepository      parameter
+     * @param Request               $request               parameter
+     * @param string                $slug                  parameter
      *
      * @return RedirectResponse|Response
      *
      * @Route("/tricks/details/{slug}", name="tricksDetails")
      */
-    public function tricksDetails(
-        TricksRepository      $tricksRepository,
-        CommentaireRepository $commentaireRepository,
-        EditTricksRepository  $editTricksRepository,
-        ImagesRepository      $imagesRepository,
-        Request               $request,
-                              $slug
-    )
+    public function tricksDetails(TricksRepository $tricksRepository, CommentaireRepository $commentaireRepository, EditTricksRepository $editTricksRepository, ImagesRepository $imagesRepository, Request $request, string $slug)
     {
 
         $trick = $tricksRepository->findOneBy(['slug' => $slug, 'deleted_at' => null]);
@@ -85,22 +78,24 @@ class Tricks extends AbstractController
 
         $mainImage = $imagesRepository->findOneBy(['tricks' => $trick, 'main' => true]);
 
-        return $this->render('tricks/details.html.twig', [
-            'title' => 'Tricks',
-            'trick' => $trick,
-            'lastEdit' => $lastEdit,
-            'commentaires' => $tricksCommentaires,
-            'form' => $form->createView(),
-            'mainImage' => $mainImage,
-            'slug' => $slug
-        ]);
+        return $this->render(
+            'tricks/details.html.twig',
+            [
+                'trick' => $trick,
+                'lastEdit' => $lastEdit,
+                'commentaires' => $tricksCommentaires,
+                'form' => $form->createView(),
+                'mainImage' => $mainImage,
+                'slug' => $slug
+            ]
+        );
     }
 
 
     /**
-     * @param Request           $request
-     * @param UtilitaireService $utilitaireService
-     * @param TricksImages      $tricksImages
+     * @param Request           $request           parameter
+     * @param UtilitaireService $utilitaireService parameter
+     * @param TricksImages      $tricksImages      parameter
      *
      * @return RedirectResponse|Response
      *
@@ -146,33 +141,27 @@ class Tricks extends AbstractController
             return $this->redirectToRoute('index', ['tricksPage' => 'tricks']);
         }
 
-        return $this->render('tricks/add.html.twig',
+        return $this->render(
+            'tricks/add.html.twig',
             [
-                'title' => 'Ajouter un tricks',
                 'form' => $form->createView()
-            ]);
+            ]
+        );
     }
 
 
     /**
-     * @param TricksRepository  $tricksRepository
-     * @param UtilitaireService $utilitaireService
-     * @param VideoRepository   $videoRepository
-     * @param Request           $request
-     * @param                   $slug
+     * @param TricksRepository  $tricksRepository  parameter
+     * @param UtilitaireService $utilitaireService parameter
+     * @param VideoRepository   $videoRepository   parameter
+     * @param Request           $request           parameter
+     * @param string            $slug              parameter
      *
      * @return RedirectResponse|Response
      *
      * @Route("/tricks/modifier/{slug}", name="tricksEdit")
      */
-    public function tricksEdit(
-        TricksRepository  $tricksRepository,
-        UtilitaireService $utilitaireService,
-        VideoRepository   $videoRepository,
-        Request           $request,
-        TricksImages      $tricksImages,
-                          $slug
-    )
+    public function tricksEdit(TricksRepository $tricksRepository, UtilitaireService $utilitaireService, VideoRepository $videoRepository, Request $request, TricksImages $tricksImages, string $slug)
     {
 
         if (!$this->isGranted('ROLE_USER')) {
@@ -188,11 +177,7 @@ class Tricks extends AbstractController
 
         $form = $this->createForm(EditTricksType::class, $trick);
 
-        $editTricks = new EditTricks();
-
-        $editTricks->setOldCategory($trick->getCategory());
-        $editTricks->setOldDescription($trick->getDescription());
-        $editTricks->setOldName($trick->getName());
+        $editTricks = new EditTricks($trick);
 
         $form->handleRequest($request);
 
@@ -205,7 +190,7 @@ class Tricks extends AbstractController
                 $videos = $request->request->get('edit_tricks')['videos'];
 
                 foreach ($tricksVideos as $tricksVideo) {
-                    foreach ($videos as $key => $video) {
+                    foreach ($videos as $video) {
                         if ($video['link'] === $tricksVideo->getLink()) {
                             break;
                         }
@@ -236,11 +221,7 @@ class Tricks extends AbstractController
 
             $em->persist($trick);
 
-            $editTricks->setTrick($trick);
-            $editTricks->setUpdatedBy($this->getUser());
-            $editTricks->setNewCategory($trick->getCategory());
-            $editTricks->setNewDescription($trick->getDescription());
-            $editTricks->setNewName($trick->getName());
+            $editTricks->newValue($trick, $this->getUser());
 
             $em->persist($editTricks);
             $em->flush();
@@ -249,7 +230,6 @@ class Tricks extends AbstractController
         }
 
         return $this->render('tricks/edit.html.twig', [
-            'title' => 'Modifier un tricks',
             'form' => $form->createView(),
             'trick' => $trick
         ]);
@@ -257,14 +237,14 @@ class Tricks extends AbstractController
 
 
     /**
-     * @param TricksRepository $tricksRepository
-     * @param                  $slug
+     * @param TricksRepository $tricksRepository parameter
+     * @param string           $slug             parameter
      *
      * @return RedirectResponse
      *
      * @Route("/tricks/supprimer/{slug}", name="tricksDelete")
      */
-    public function tricksDelete(TricksRepository $tricksRepository, $slug): RedirectResponse
+    public function tricksDelete(TricksRepository $tricksRepository, string $slug): RedirectResponse
     {
 
         if (!$this->isGranted('ROLE_USER')) {
@@ -292,10 +272,7 @@ class Tricks extends AbstractController
      *
      * @Route("/tricks/list", name="tricksList")
      */
-    public function tricksList(
-        TricksRepository $tricksRepository,
-        Request          $request
-    ): Response
+    public function tricksList(TricksRepository $tricksRepository, Request $request): Response
     {
 
         $start = $request->request->get('start');
@@ -305,9 +282,11 @@ class Tricks extends AbstractController
 
         $tricks = $tricksRepository->findBetweenStartAndEnd($start, $number);
 
-        return $this->render('tricks/list.html.twig', [
-            'title' => 'Tricks',
-            'tricks' => $tricks
-        ]);
+        return $this->render(
+            'tricks/list.html.twig',
+            [
+                'tricks' => $tricks
+            ]
+        );
     }
 }
