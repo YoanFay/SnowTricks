@@ -66,6 +66,11 @@ class EditTricks
      */
     private $trick;
 
+    public function __construct()
+    {
+        $this->setUpdatedAt(new \DateTime());
+    }
+
     public function getId(): ?int
     {
         return $this->id;

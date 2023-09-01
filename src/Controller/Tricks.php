@@ -136,8 +136,8 @@ class Tricks extends AbstractController
                     }
                 }
             }
-            
-            if (isset($request->request->get('add_tricks')['videos'])){
+
+            if (isset($request->request->get('add_tricks')['videos'])) {
                 foreach ($request->request->get('add_tricks')['videos'] as $video) {
                     $videoEntity = new Video();
                     $videoEntity->setTricks($trick);
@@ -152,10 +152,11 @@ class Tricks extends AbstractController
             return $this->redirectToRoute('index', ['tricksPage' => 'tricks']);
         }
 
-        return $this->render('tricks/add.html.twig', [
-            'title' => 'Ajouter un tricks',
-            'form' => $form->createView()
-        ]);
+        return $this->render('tricks/add.html.twig',
+            [
+                'title' => 'Ajouter un tricks',
+                'form' => $form->createView()
+            ]);
     }
 
 
@@ -253,7 +254,7 @@ class Tricks extends AbstractController
                                     }
                                 }
 
-                                if ($count === 0){
+                                if ($count === 0) {
                                     $imageEntity->setMain(true);
                                     $count++;
                                 }
@@ -270,7 +271,6 @@ class Tricks extends AbstractController
             $em->persist($trick);
 
             $editTricks->setTrick($trick);
-            $editTricks->setUpdatedAt(new \DateTime());
             $editTricks->setUpdatedBy($this->getUser());
             $editTricks->setNewCategory($trick->getCategory());
             $editTricks->setNewDescription($trick->getDescription());

@@ -16,6 +16,10 @@ main {
   height: 87%;
 }
 
+.menu a.active{
+  background-color: #0d6efd;
+}
+
 .background {
   background-image: url("../img/wallpaper.jpg");
   background-repeat: no-repeat;
@@ -162,10 +166,10 @@ form ul li{
 }
 
 .image-container {
-     display: inline-block;
-     position: relative;
-     overflow: hidden;
-   }
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+}
 
 .image-container img {
   max-width: 100%;
@@ -286,7 +290,7 @@ footer{
     bottom: 5%;
   }
 
-#bottom{
-  margin-bottom: 25%;
-}
+  #bottom{
+    margin-bottom: 25%;
+  }
 }

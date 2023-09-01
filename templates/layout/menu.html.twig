@@ -5,16 +5,23 @@
     <div id="layoutMenu" class="p-2 d-flex flex-lg-row flex-column justify-content-lg-between w-100 h-100">
         <div class="d-flex flex-row align-items-center justify-content-center h-100">
             <img id="logoImg" src="/img/logo.png" class="cursor-click" onclick="Homepage()">
-            <h1 id="pageTitle" class="ms-4">{% block titlePage %}{{ title }}{% endblock %}</h1>
         </div>
         <div class="d-flex flex-lg-row flex-column align-items-center">
             <div class="d-none d-lg-block">
                 <ul class="m-0 p-0 d-flex flex-lg-row flex-column align-items-center">
-                    <li class="px-lg-2 menu"><a href="{{ path('index') }}">Accueil</a></li>
-                    <li class="px-lg-2 menu"><a href="{{ path('index') }}#homepageTricks">Tricks</a></li>
+                    <li class="px-lg-2 menu">
+                        <a href="{{ path('index') }}" {% if app.request.get('_route') == "index" %} class="active" {% endif %}>Accueil</a>
+                    </li>
+                    <li class="px-lg-2 menu">
+                        <a href="{{ path('index') }}#homepageTricks" {% if app.request.get('_route') == "tricksDetails" or app.request.get('_route') == "tricksAdd" or app.request.get('_route') == "tricksEdit" %} class="active" {% endif %} >Tricks</a>
+                    </li>
                     {% if app.user == null %}
-                        <li class="px-lg-2 menu"><a href="{{ path('signUp') }}">Inscription</a></li>
-                        <li class="px-lg-2 menu"><a href="{{ path('signIn') }}">Connexion</a></li>
+                        <li class="px-lg-2 menu">
+                            <a href="{{ path('signUp') }}" {% if app.request.get('_route') == "signUp" %} class="active" {% endif %} >Inscription</a>
+                        </li>
+                        <li class="px-lg-2 menu">
+                            <a href="{{ path('signIn') }}" {% if app.request.get('_route') == "signIn" %} class="active" {% endif %} >Connexion</a>
+                        </li>
                     {% else %}
                         <li class="px-lg-2 menu"><a href="{{ path('logout') }}">Déconnexion</a></li>
                     {% endif %}
@@ -28,13 +35,19 @@
 {% block footer %}
 
     <div class="d-flex align-items-center">
-        <a href="{{ path('index') }}" class="mx-2 d-flex align-items-center text-decoration-none text-white"><span class="material-symbols-outlined">home</span></a>
-        <a href="{{ path('index') }}#homepageTricks" class="mx-2 d-flex align-items-center text-decoration-none text-white"><span class="material-symbols-outlined">bookmark</span></a>
+        <a href="{{ path('index') }}" class="mx-2 d-flex align-items-center text-decoration-none text-white"><span
+                    class="material-symbols-outlined">home</span></a>
+        <a href="{{ path('index') }}#homepageTricks"
+           class="mx-2 d-flex align-items-center text-decoration-none text-white"><span
+                    class="material-symbols-outlined">bookmark</span></a>
         {% if app.user == null %}
-            <a href="{{ path('signUp') }}" class="mx-2 d-flex align-items-center text-decoration-none text-white"><span class="material-symbols-outlined">edit_square</span></a>
-            <a href="{{ path('signIn') }}" class="mx-2 d-flex align-items-center text-decoration-none text-white"><span class="material-symbols-outlined">login</span></a>
+            <a href="{{ path('signUp') }}" class="mx-2 d-flex align-items-center text-decoration-none text-white"><span
+                        class="material-symbols-outlined">edit_square</span></a>
+            <a href="{{ path('signIn') }}" class="mx-2 d-flex align-items-center text-decoration-none text-white"><span
+                        class="material-symbols-outlined">login</span></a>
         {% else %}
-            <a href="{{ path('logout') }}" class="mx-2 d-flex align-items-center text-decoration-none text-white"><span class="material-symbols-outlined">logout</span></a>
+            <a href="{{ path('logout') }}" class="mx-2 d-flex align-items-center text-decoration-none text-white"><span
+                        class="material-symbols-outlined">logout</span></a>
         {% endif %}
     </div>
 
