@@ -3,7 +3,7 @@
 {% block main %}
 
     <div id="homepageImg"
-         class="homepage background w-100 flex-column justify-content-between align-items-center p-2 {% if tricksPage != null %}display-none{% else %}display-flex{% endif %}">
+         class="homepage background w-100 flex-column justify-content-between align-items-center p-2 d-flex {# {% if tricksPage != null %}display-none{% else %}display-flex{% endif %} #}">
         <div></div>
         <div class="catchPhrase">
             <p class="h1">
@@ -11,15 +11,18 @@
                 apprenez et inspirez-vous pour des descentes exceptionnelles !
             </p>
         </div>
-        {# TODO:Changer la flèche de coté à la fin #}
         <div class="w-100 d-flex">
-            <span id="arrowDownward" class="material-symbols-outlined">arrow_downward</span>
+            <a id="btnTricks" href="#listTricks"><span id="arrowDownward" class="material-symbols-outlined arrow">arrow_downward</span></a>
+        </div>
+        <div class="w-100 d-flex">
+            <a href="#layoutMenu"><span id="arrowUpward"
+                                        class="material-symbols-outlined arrow d-none">arrow_upward</span></a>
         </div>
 
     </div>
 
     <div id="homepageTricks"
-         class="background w-100 flex-column justify-content-between align-items-center p-2 {% if tricksPage != null %}display-flex{% else %}display-none{% endif %}">
+         class="background w-100 flex-column justify-content-between align-items-center p-2 d-flex {# {% if tricksPage != null %}display-flex{% else %}display-none{% endif %} #}">
 
         <div id="listTricks" class="row w-100" data-id="1">
         </div>
@@ -30,15 +33,13 @@
                 </div>
             </div>
         </div>
-        <div>
+        <div id="bottom">
             <button id="showMoreButton" class="btn btn-primary" data-number="">Charger plus de tricks</button>
-            <a href="{{ path('tricksAdd') }}">
-                <button class="btn btn-primary">Ajouter un tricks</button>
-            </a>
-        </div>
-        {# TODO:Changer la flèche de coté à la fin #}
-        <div class="w-100 d-flex">
-            <span id="arrowUpward" class="material-symbols-outlined">arrow_upward</span>
+            {% if app.user != null %}
+                <a href="{{ path('tricksAdd') }}">
+                    <button class="btn btn-primary">Ajouter un tricks</button>
+                </a>
+            {% endif %}
         </div>
 
     </div>
@@ -50,8 +51,8 @@
     {{ parent() }}
     <script>
 
-        $(document).ready(function() {
-            tricksList(1,10);
+        $(document).ready(function () {
+            tricksList(1, 10);
         });
 
         $("#arrowDownward").click(function () {
@@ -107,6 +108,21 @@
             let start = $('#showMoreButton').attr('data-number');
             tricksList(start, 5)
         });
+
+        $(window).scroll(function () {
+            var scrollPosition = $(window).scrollTop();
+
+            if (scrollPosition > 1) {
+                // Appliquer des styles lorsque le défilement dépasse 100 pixels
+                $("#arrowUpward").removeClass("d-none");
+                $("#arrowDownward").addClass("d-none");
+            } else {
+                // Réinitialiser les styles lorsque le défilement est inférieur à 100 pixels
+                $("#arrowDownward").removeClass("d-none");
+                $("#arrowUpward").addClass("d-none");
+            }
+        });
+
 
     </script>
 {% endblock %}

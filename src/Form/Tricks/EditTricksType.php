@@ -39,7 +39,7 @@ class EditTricksType extends AbstractType
                 'choice_label' => 'name',
                 'label' => "Catégorie",
                 'attr' => [
-                    'class' => 'form-control d-inline w-25'
+                    'class' => 'form-control Width25ToResponsive75'
                 ]
             ])
             ->add('images', CollectionType::class, [

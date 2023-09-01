@@ -3,7 +3,7 @@
 {% block main %}
 
     <div class="background d-flex justify-content-center">
-        <div class="col-6 card m-4">
+        <div class="col-lg-6 card m-4">
             <div class="card-header col-12 d-flex flex-row">
                 <div class="col-8">
                     <h2>{{ trick.name }} ({{ trick.category.name }})</h2>
@@ -36,7 +36,7 @@
                                 {% endif %}
                         >
                     </div>
-                    <div id="gallery" class="d-flex flex-row mt-2 mx-2 w-100">
+                    <div id="gallery" class="d-lg-flex flex-row mt-2 mx-2 w-100 d-none">
                         {% for image in trick.images %}
                             <img class="w-25"
                                  src="/img/Tricks/{{ trick.slug }}/{{ image.name }}.{{ image.type }}"
@@ -51,6 +51,11 @@
                                     {% endif %}
                                  alt="miniature"/>
                         {% endfor %}
+                    </div>
+                    <div>
+                        <button class="btn btn-secondary mt-2 open-modal-btn d-lg-none">
+                            Afficher les médias
+                        </button>
                     </div>
                 </div>
                 <hr>
@@ -96,6 +101,23 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div class="modal justify-content-center" id="myModal">
+        <div class="modal-content my-3 w-75 d-flex align-items-center p-2 overflow-scroll">
+            <h2>Contenue multimédia</h2>
+
+            {% for image in trick.images %}
+                <img class="w-100 my-3"
+                     src="/img/Tricks/{{ trick.slug }}/{{ image.name }}.{{ image.type }}"
+                     onclick="changeImg('/img/Tricks/{{ trick.slug }}/{{ image.name }}.{{ image.type }}')">
+            {% endfor %}
+            {% for video in trick.videos %}
+                <iframe class="w-100 my-3" id="selectMedia" src="{{ video.link }}"></iframe>
+            {% endfor %}
+
+            <button class="btn btn-secondary mx-4" id="closeModal">Fermer</button>
         </div>
     </div>
 
@@ -157,6 +179,13 @@
             CommentList(start, 5)
         });
 
+        $('.open-modal-btn').click(function() {
+            $('#myModal').css('display', 'flex');
+        });
+
+        $('#closeModal').click(function() {
+            $('#myModal').css('display', 'none');
+        });
 
     </script>
 
