@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\EditTricks;
 use App\Entity\Commentaire;
-use App\Entity\Images;
 use App\Entity\Tricks as TricksEntity;
 use App\Entity\Video;
 use App\Form\CommentaireType;
@@ -15,17 +14,28 @@ use App\Repository\CommentaireRepository;
 use App\Repository\ImagesRepository;
 use App\Repository\TricksRepository;
 use App\Repository\VideoRepository;
-use App\Service\UploadService;
+use App\Service\TricksImages;
 use App\Service\UtilitaireService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class Tricks extends AbstractController
 {
 
+
     /**
+     * @param TricksRepository      $tricksRepository
+     * @param CommentaireRepository $commentaireRepository
+     * @param EditTricksRepository  $editTricksRepository
+     * @param ImagesRepository      $imagesRepository
+     * @param Request               $request
+     * @param                       $slug
+     *
+     * @return RedirectResponse|Response
+     *
      * @Route("/tricks/details/{slug}", name="tricksDetails")
      */
     public function tricksDetails(
@@ -88,9 +98,15 @@ class Tricks extends AbstractController
 
 
     /**
+     * @param Request           $request
+     * @param UtilitaireService $utilitaireService
+     * @param TricksImages      $tricksImages
+     *
+     * @return RedirectResponse|Response
+     *
      * @Route("/tricks/ajouter", name="tricksAdd")
      */
-    public function tricksAdd(TricksRepository $tricksRepository, Request $request, UtilitaireService $utilitaireService, UploadService $uploadService)
+    public function tricksAdd(Request $request, UtilitaireService $utilitaireService, TricksImages $tricksImages)
     {
 
         if (!$this->isGranted('ROLE_USER')) {
@@ -112,29 +128,7 @@ class Tricks extends AbstractController
             $em->persist($trick);
 
             if (isset($request->files->get('add_tricks')['images'])) {
-                $authorizedExt = ['png', 'jpg', 'jpeg', 'webp', 'avif', 'svg'];
-                foreach ($request->files->get('add_tricks')['images'] as $key => $image) {
-                    $image = $image['images'];
-                    if ($image) {
-                        if (in_array($image->getClientOriginalExtension(), $authorizedExt) && $image->getSize() <= 500000) {
-                            if ($name = $uploadService->uploadTricks($trick->getSlug(), $image)) {
-                                $imageEntity = new Images();
-
-                                $imageEntity->setTricks($trick);
-                                $imageEntity->setName($name);
-                                $imageEntity->setType($image->getClientOriginalExtension());
-
-                                if (isset($request->request->get('add_tricks')['images'][$key])) {
-                                    if ($request->request->get('add_tricks')['images'][$key]['main']) {
-                                        $imageEntity->setMain(true);
-                                    }
-                                }
-
-                                $em->persist($imageEntity);
-                            }
-                        }
-                    }
-                }
+                $tricksImages->addTricks($request->files->get('add_tricks')['images'], $trick, $em);
             }
 
             if (isset($request->request->get('add_tricks')['videos'])) {
@@ -161,6 +155,14 @@ class Tricks extends AbstractController
 
 
     /**
+     * @param TricksRepository  $tricksRepository
+     * @param UtilitaireService $utilitaireService
+     * @param VideoRepository   $videoRepository
+     * @param Request           $request
+     * @param                   $slug
+     *
+     * @return RedirectResponse|Response
+     *
      * @Route("/tricks/modifier/{slug}", name="tricksEdit")
      */
     public function tricksEdit(
@@ -168,8 +170,7 @@ class Tricks extends AbstractController
         UtilitaireService $utilitaireService,
         VideoRepository   $videoRepository,
         Request           $request,
-        UploadService     $uploadService,
-        ImagesRepository  $imagesRepository,
+        TricksImages      $tricksImages,
                           $slug
     )
     {
@@ -227,43 +228,8 @@ class Tricks extends AbstractController
                 }
             }
 
-            $count = $imagesRepository->countImage($trick)[0][1];
-
             if (isset($request->files->get('edit_tricks')['images'])) {
-                $authorizedExt = ['png', 'jpg', 'jpeg', 'webp', 'avif', 'svg'];
-                foreach ($request->files->get('edit_tricks')['images'] as $key => $image) {
-                    $image = $image['images'];
-                    if ($image) {
-                        if (in_array($image->getClientOriginalExtension(), $authorizedExt) && $image->getSize() <= 500000) {
-                            if ($name = $uploadService->uploadTricks($trick->getSlug(), $image)) {
-                                $imageEntity = new Images();
-
-                                $imageEntity->setTricks($trick);
-                                $imageEntity->setName($name);
-                                $imageEntity->setType($image->getClientOriginalExtension());
-
-                                if (isset($request->request->get('edit_tricks')['images'][$key])) {
-                                    if ($request->request->get('edit_tricks')['images'][$key]['main']) {
-
-                                        $mainImage = $imagesRepository->findOneBy(['tricks' => $trick, 'main' => true]);
-
-                                        $mainImage->setMain(false);
-                                        $em->persist($mainImage);
-
-                                        $imageEntity->setMain(true);
-                                    }
-                                }
-
-                                if ($count === 0) {
-                                    $imageEntity->setMain(true);
-                                    $count++;
-                                }
-
-                                $em->persist($imageEntity);
-                            }
-                        }
-                    }
-                }
+                $tricksImages->editTricks($request->files->get('edit_tricks')['images'], $trick, $em);
             }
 
             $trick->setSlug($utilitaireService->makeSlug($trick->getName()));
@@ -291,9 +257,14 @@ class Tricks extends AbstractController
 
 
     /**
+     * @param TricksRepository $tricksRepository
+     * @param                  $slug
+     *
+     * @return RedirectResponse
+     *
      * @Route("/tricks/supprimer/{slug}", name="tricksDelete")
      */
-    public function tricksDelete(TricksRepository $tricksRepository, $slug)
+    public function tricksDelete(TricksRepository $tricksRepository, $slug): RedirectResponse
     {
 
         if (!$this->isGranted('ROLE_USER')) {
@@ -314,13 +285,17 @@ class Tricks extends AbstractController
 
 
     /**
+     * @param TricksRepository $tricksRepository
+     * @param Request          $request
+     *
+     * @return Response
+     *
      * @Route("/tricks/list", name="tricksList")
      */
     public function tricksList(
         TricksRepository $tricksRepository,
-        ImagesRepository $imagesRepository,
         Request          $request
-    )
+    ): Response
     {
 
         $start = $request->request->get('start');
