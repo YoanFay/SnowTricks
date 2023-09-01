@@ -20,8 +20,8 @@ class VideosFixtures extends Fixture implements DependentFixtureInterface
     public function load(ObjectManager $manager): void
     {
 
-        $videos =
-            [
+        $videos
+            =[
                 [
                     'tricks' => $this->getReference('mute'),
                     'link' => 'https://www.youtube.com/embed/jm19nEvmZgM',

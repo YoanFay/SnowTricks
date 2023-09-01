@@ -18,8 +18,8 @@ class RightsFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
 
-        $rights =
-            [
+        $rights
+            =[
                 [
                     'name' => 'Utilisateur',
                     'role' => 'ROLE_USER'

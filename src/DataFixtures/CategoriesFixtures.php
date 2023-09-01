@@ -18,8 +18,8 @@ class CategoriesFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
 
-        $categories =
-            [
+        $categories
+            =[
                 'Grabs',
                 'Rotations',
                 'Flips',

@@ -19,8 +19,8 @@ class ImagesFixtures extends Fixture implements DependentFixtureInterface
     public function load(ObjectManager $manager): void
     {
 
-        $images =
-            [
+        $images
+            =[
                 [
                     'tricks' => $this->getReference('mute'),
                     'name' => '01',

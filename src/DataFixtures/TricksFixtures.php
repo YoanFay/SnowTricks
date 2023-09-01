@@ -20,15 +20,15 @@ class TricksFixtures extends Fixture implements DependentFixtureInterface
     public function load(ObjectManager $manager): void
     {
 
-        $users =
-            [
+        $users
+            =[
             $this->getReference('Yoan-Fayolle'),
             $this->getReference('Naoy-Elloyaf'),
             $this->getReference('John-Doe'),
         ];
 
-        $tricks =
-            [
+        $tricks
+            =[
             [
                 'name' => "Mute",
                 'description' => "Saisie de la carre frontside de la planche entre les deux pieds avec la main avant",

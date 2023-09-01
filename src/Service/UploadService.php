@@ -15,7 +15,7 @@ class  UploadService
 
 
     /**
-     * @param Kernel $kernel
+     * @param Kernel $kernel parameter
      */
     public function __construct(Kernel $kernel)
     {
@@ -45,6 +45,7 @@ class  UploadService
 
         return $name;
 
-    }
+    }//end uploadTricks()
+
 
 }
