@@ -202,6 +202,28 @@ form ul li{
   border-left: black 1px solid;
 }
 
+.Width25ToResponsive75{
+  width: 25% !important;
+}
+
+#edit_tricks_category{
+  display: inline;
+  margin: 0 1% 0 1%;
+}
+
+footer{
+  display: none;
+}
+
+.arrow{
+  text-align: left;
+  padding: 10px;
+  position: fixed;
+  bottom: 0;
+  width: 5%;
+  color: white !important;
+}
+
 @media screen and (max-width: 991px) {
   header {
     height: auto;
@@ -210,4 +232,61 @@ form ul li{
   #logoImg{
     width: 25%;
   }
+
+  #imgPrincipale{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    height: 300px;
+  }
+
+  .avatar{
+    width: 10%;
+  }
+
+  .Width25ToResponsive75{
+    width: 75% !important;
+  }
+
+  #edit_tricks_name{
+    width: 75% !important
+  }
+
+  #edit_tricks_category{
+    display: initial;
+  }
+
+  .border-right{
+    border-right: none;
+  }
+
+  .border-left{
+    border-left: none;
+  }
+
+  main {
+    width: 100%;
+    height: 85%;
+  }
+
+  footer{
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .arrow{
+    bottom: 5%;
+  }
+
+#bottom{
+  margin-bottom: 25%;
+}
 }

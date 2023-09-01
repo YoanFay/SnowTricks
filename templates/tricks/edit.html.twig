@@ -3,21 +3,32 @@
 {% block main %}
 
     <div class="background d-flex justify-content-center">
-        <div class="col-6 card m-4">
+        <div class="col-lg-6 card m-4">
             {{ form_start(form) }}
             <div class="card-header col-12 d-flex flex-row">
-                <div class="col-8">
-                    <h2>{{ form_widget(form.name) }} ({{ form_widget(form.category) }})</h2>
+                <div class="col-lg-8 col-12">
+                    {# <h2 class="d-none d-lg-block">{{ form_widget(form.name) }} <br class="d-lg-none"> ({{ form_widget(form.category) }})</h2> #}
+                    <p>
+                        {{ form_label(form.name) }}
+                        {{ form_widget(form.name) }}
+                    </p>
+                    <p>
+                        {{ form_label(form.category) }}<br class="d-lg-none">
+                        {{ form_widget(form.category) }}
+                    </p>
                 </div>
                 {{ form_errors(form.name) }}
                 {{ form_errors(form.category) }}
             </div>
             <div class="card-body">
                 <div>
+                    <button class="btn btn-secondary mt-2 open-modal-btn d-lg-none">
+                        Afficher les médias
+                    </button>
                     {% if trick.images != null %}
-                        <div id="gallery" class="d-flex flex-row mt-2 mx-2 w-100">
+                        <div id="gallery" class="d-lg-flex flex-row mt-2 mx-2 w-100 d-none">
                             {% for image in trick.images %}
-                                <div class="w-25 d-flex flex-column justify-content-between" id="image-{{ image.id }}">
+                                <div class="w-25 d-flex flex-column justify-content-between" id="image-modal-{{ image.id }}">
                                     <div class="w-100 image-container">
                                         <img class="w-100"
                                              src="/img/Tricks/{{ trick.slug }}/{{ image.name }}.{{ image.type }}"
@@ -44,13 +55,14 @@
                     </div>
                 </div>
                 <hr>
-                <div class="col-12 d-flex">
-                    <div class="col-5 border-right pe-2" id="video"
+                <div class="col-12 d-flex flex-lg-row flex-column">
+                    <div class="col-lg-5 border-right pe-2" id="video"
                          data-prototype="{{ form_widget(form.videos.vars.prototype)|e('html_attr') }}">
                         {{ form_row(form.videos) }}
                         <button class="btn btn-secondary" id="add-video">Ajouter une vidéo</button>
                     </div>
-                    <div class="col-5 border-left ps-2" id="image"
+                    <hr class="d-lg-none">
+                    <div class="col-lg-5 border-left ps-2" id="image"
                          data-prototype="{{ form_widget(form.images.vars.prototype)|e('html_attr') }}">
                         {{ form_row(form.images) }}
                         <button class="btn btn-secondary" id="add-image">Ajouter une images</button>
@@ -58,6 +70,40 @@
                 </div>
             </div>
             {{ form_end(form) }}
+        </div>
+    </div>
+
+    <div class="modal justify-content-center" id="myModal">
+        <div class="modal-content my-3 w-75 d-flex align-items-center p-2 overflow-scroll">
+            <h2>Contenue multimédia</h2>
+
+            {% if trick.images != null %}
+                <div id="gallery" class="d-flex flex-column align-items-center mt-2 mx-2 w-100">
+                    {% for image in trick.images %}
+                        <div class="Width25ToResponsive75 d-flex flex-column justify-content-between"
+                             id="image-{{ image.id }}">
+                            <div class="w-100 image-container">
+                                <img class="w-100"
+                                     src="/img/Tricks/{{ trick.slug }}/{{ image.name }}.{{ image.type }}"
+                                >
+                                <div class="overlay" onclick="deleteImageAjax({{ image.id }})">
+                                    <span class="material-symbols-outlined cursor-click">delete</span>
+                                </div>
+                            </div>
+                            <div id="btnDefault-{{ image.id }}"
+                                 class="d-flex justify-content-center btnImageDefault {% if image.main %}d-none{% endif %}">
+                                <button class="btn btn-secondary w-75" onclick="setMainImage({{ image.id }})">
+                                    Définir comme image par défaut
+                                </button>
+                                <hr>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <hr>
+            {% endif %}
+
+            <button class="btn btn-secondary mx-4" id="closeModal">Fermer</button>
         </div>
     </div>
 
@@ -164,7 +210,8 @@
                     },
                     success: function (data) {
                         if (data['result']) {
-                            $('#image-' + id).addClass('d-none');
+                            $('#image-' + id).removeClass('d-flex').addClass('d-none');
+                            $('#image-modal-' + id).removeClass('d-flex').addClass('d-none');
                             alert("Image supprimée avec succès.");
                         } else {
                             alert("L'image n'a pas pu être supprimée.");
@@ -199,6 +246,16 @@
                 });
             }
         }
+
+        $('.open-modal-btn').click(function () {
+            event.preventDefault();
+            $('#myModal').css('display', 'flex');
+        });
+
+        $('#closeModal').click(function () {
+            event.preventDefault();
+            $('#myModal').css('display', 'none');
+        });
 
     </script>
 
