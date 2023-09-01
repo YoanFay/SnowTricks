@@ -10,16 +10,25 @@ use Doctrine\Persistence\ObjectManager;
 
 class TricksFixtures extends Fixture implements DependentFixtureInterface
 {
+
+
+    /**
+     * @param ObjectManager $manager
+     *
+     * @return void
+     */
     public function load(ObjectManager $manager): void
     {
 
-        $users = [
+        $users =
+            [
             $this->getReference('Yoan-Fayolle'),
             $this->getReference('Naoy-Elloyaf'),
             $this->getReference('John-Doe'),
         ];
 
-        $tricks = [
+        $tricks =
+            [
             [
                 'name' => "Mute",
                 'description' => "Saisie de la carre frontside de la planche entre les deux pieds avec la main avant",
@@ -109,11 +118,15 @@ class TricksFixtures extends Fixture implements DependentFixtureInterface
         $manager->flush();
     }
 
-    public function getDependencies()
+
+    /**
+     * @return string[]
+     */
+    public function getDependencies(): array
     {
-        return array(
+        return [
             UsersFixtures::class,
             CategoriesFixtures::class,
-        );
+        ];
     }
 }

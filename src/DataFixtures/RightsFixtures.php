@@ -8,22 +8,31 @@ use Doctrine\Persistence\ObjectManager;
 
 class RightsFixtures extends Fixture
 {
+
+
+    /**
+     * @param ObjectManager $manager
+     *
+     * @return void
+     */
     public function load(ObjectManager $manager): void
     {
-        $rights = [
+
+        $rights =
             [
-                'name' => 'Utilisateur',
-                'role' => 'ROLE_USER'
-            ],
-            [
-                'name' => 'Administrateur',
-                'role' => 'ROLE_ADMIN'
-            ],
-            [
-                'name' => 'Super-Administrateur',
-                'role' => 'ROLE_SUPER_ADMIN'
-            ],
-        ];
+                [
+                    'name' => 'Utilisateur',
+                    'role' => 'ROLE_USER'
+                ],
+                [
+                    'name' => 'Administrateur',
+                    'role' => 'ROLE_ADMIN'
+                ],
+                [
+                    'name' => 'Super-Administrateur',
+                    'role' => 'ROLE_SUPER_ADMIN'
+                ],
+            ];
 
         foreach ($rights as $rightTab) {
             $right = new Rights();
@@ -36,5 +45,6 @@ class RightsFixtures extends Fixture
         }
 
         $manager->flush();
-    }
+
+    }//end load()
 }

@@ -9,29 +9,37 @@ use Doctrine\Persistence\ObjectManager;
 
 class UsersFixtures extends Fixture implements DependentFixtureInterface
 {
+
+
+    /**
+     * @param ObjectManager $manager
+     *
+     * @return void
+     */
     public function load(ObjectManager $manager): void
     {
 
-        $users = [
+        $users =
             [
-                'login' => 'Yoan-Fayolle',
-                'mail' => 'yoanfayolle.yf@gmail.com',
-                'password' => 'MotDePasseSA',
-                'right' => $this->getReference('Super-Administrateur')
-            ],
-            [
-                'login' => 'Naoy-Elloyaf',
-                'mail' => 'yoanfayolle.yf@gmail.com',
-                'password' => 'MotDePasseA',
-                'right' => $this->getReference('Administrateur')
-            ],
-            [
-                'login' => 'John-Doe',
-                'mail' => 'yoanfayolle.yf@gmail.com',
-                'password' => 'MotDePasse',
-                'right' => $this->getReference('Utilisateur')
-            ],
-        ];
+                [
+                    'login' => 'Yoan-Fayolle',
+                    'mail' => 'yoanfayolle.yf@gmail.com',
+                    'password' => 'MotDePasseSA',
+                    'right' => $this->getReference('Super-Administrateur')
+                ],
+                [
+                    'login' => 'Naoy-Elloyaf',
+                    'mail' => 'yoanfayolle.yf@gmail.com',
+                    'password' => 'MotDePasseA',
+                    'right' => $this->getReference('Administrateur')
+                ],
+                [
+                    'login' => 'John-Doe',
+                    'mail' => 'yoanfayolle.yf@gmail.com',
+                    'password' => 'MotDePasse',
+                    'right' => $this->getReference('Utilisateur')
+                ],
+            ];
 
         foreach ($users as $userTab) {
             $user = new User();
@@ -49,14 +57,19 @@ class UsersFixtures extends Fixture implements DependentFixtureInterface
         }
 
         $manager->flush();
-    }
+
+    }//end load()
 
 
+    /**
+     * @return string[]
+     */
     public function getDependencies()
     {
 
-        return array(
+        return [
             RightsFixtures::class,
-        );
+        ];
+
     }
 }

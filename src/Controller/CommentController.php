@@ -12,17 +12,18 @@ use Symfony\Component\Routing\Annotation\Route;
 class CommentController extends AbstractController
 {
 
+
     /**
-     * @param CommentaireRepository $commentaireRepository parameter
-     * @param TricksRepository      $tricksRepository      parameter
-     * @param Request               $request               parameter
-     * @param string                $slug                  parameter
+     * @param CommentaireRepository $commentaireRepo  parameter
+     * @param TricksRepository      $tricksRepository parameter
+     * @param Request               $request          parameter
+     * @param string                $slug             parameter
      *
      * @return Response
      *
      * @Route("/comment/{slug}/list", name="commentList")
      */
-    public function commentList(CommentaireRepository $commentaireRepository, TricksRepository $tricksRepository, Request $request, string $slug): Response
+    public function commentList(CommentaireRepository $commentaireRepo, TricksRepository $tricksRepository, Request $request, string $slug): Response
     {
 
         $start = $request->request->get('start');
@@ -32,7 +33,7 @@ class CommentController extends AbstractController
 
         $trick = $tricksRepository->findOneBy(['slug' => $slug]);
 
-        $commentaire = $commentaireRepository->findBetweenStartAndEnd($trick, $start, $number);
+        $commentaire = $commentaireRepo->findBetweenStartAndEnd($trick, $start, $number);
 
         return $this->render(
             'comment/list.html.twig',
@@ -41,5 +42,8 @@ class CommentController extends AbstractController
                 'commentaires' => $commentaire
             ]
         );
-    }
+
+        
+    }//end commentList()
+
 }

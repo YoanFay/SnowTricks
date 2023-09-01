@@ -3,22 +3,40 @@
 namespace App\Service;
 
 use App\Kernel;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class  UploadService
 {
 
+    /**
+     * @var Kernel
+     */
     private $kernel;
 
-    public function __construct(Kernel $kernel){
-        $this->kernel = $kernel;
-    }
 
-    public function uploadTricks($tricksSlug, $image)
+    /**
+     * @param Kernel $kernel
+     */
+    public function __construct(Kernel $kernel)
+    {
+
+        $this->kernel = $kernel;
+
+    }//end __construct()
+
+
+    /**
+     * @param string       $tricksSlug parameter
+     * @param UploadedFile $image      parameter
+     *
+     * @return string
+     */
+    public function uploadTricks(string $tricksSlug, UploadedFile $image): string
     {
 
         $dir = $this->kernel->getProjectDir().'/public/img/Tricks/'.$tricksSlug.'/';
 
-        if (!is_dir($dir)){
+        if (!is_dir($dir)) {
             mkdir($dir);
         }
 

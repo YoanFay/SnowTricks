@@ -16,34 +16,61 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ImagesRepository extends ServiceEntityRepository
 {
+    /**
+     * @param ManagerRegistry $registry
+     */
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Images::class);
-    }
 
+        parent::__construct($registry, Images::class);
+
+    }//end __construct()
+
+
+    /**
+     * @param Images $entity
+     * @param bool   $flush
+     *
+     * @return void
+     */
     public function add(Images $entity, bool $flush = false): void
     {
+
         $this->getEntityManager()->persist($entity);
 
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+
     }
 
+
+    /**
+     * @param Images $entity
+     * @param bool   $flush
+     *
+     * @return void
+     */
     public function remove(Images $entity, bool $flush = false): void
     {
+
         $this->getEntityManager()->remove($entity);
 
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+
     }
 
+
     /**
+     * @param $tricks
+     *
      * @return Images[] Returns an array of Images objects
      */
-    public function countImage($tricks)
+    public function countImage($tricks): array
     {
+
         return $this->createQueryBuilder('i')
             ->select('COUNT(i.id)')
             ->andWhere('i.tricks = :tricks')
@@ -52,28 +79,4 @@ class ImagesRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-//    /**
-//     * @return Images[] Returns an array of Images objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('i')
-//            ->andWhere('i.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('i.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Images
-//    {
-//        return $this->createQueryBuilder('i')
-//            ->andWhere('i.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
 }

@@ -3,24 +3,46 @@
 namespace App\Service;
 
 use App\Entity\Images;
+use App\Entity\Tricks;
 use App\Kernel;
 use App\Repository\ImagesRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 class  TricksImages
 {
 
+    /**
+     * @var ImagesRepository
+     */
     private $imagesRepository;
+
+    /**
+     * @var UploadService
+     */
     private $uploadService;
 
 
+    /**
+     * @param ImagesRepository $imagesRepository parameter
+     * @param UploadService    $uploadService    parameter
+     */
     public function __construct(ImagesRepository $imagesRepository, UploadService $uploadService)
     {
+
         $this->imagesRepository = $imagesRepository;
         $this->uploadService = $uploadService;
-    }
+
+    }//end __construct()
 
 
-    public function addTricks($images, $trick, $em)
+    /**
+     * @param array                  $images  parameter
+     * @param Tricks                 $trick   parameter
+     * @param EntityManagerInterface $manager parameter
+     *
+     * @return void
+     */
+    public function addTricks(array $images, Tricks $trick, EntityManagerInterface $manager)
     {
 
         $authorizedExt = ['png', 'jpg', 'jpeg', 'webp', 'avif', 'svg'];
@@ -41,14 +63,16 @@ class  TricksImages
                             }
                         }
 
-                        $em->persist($imageEntity);
+                        $manager->persist($imageEntity);
                     }
                 }
             }
         }
     }
 
-    public function editTricks($images, $trick, $em){
+
+    public function editTricks(array $images, Tricks $trick, EntityManagerInterface $manager)
+    {
 
         $count = $this->imagesRepository->countImage($trick)[0][1];
         $authorizedExt = ['png', 'jpg', 'jpeg', 'webp', 'avif', 'svg'];
@@ -70,7 +94,7 @@ class  TricksImages
                                 $mainImage = $this->imagesRepository->findOneBy(['tricks' => $trick, 'main' => true]);
 
                                 $mainImage->setMain(false);
-                                $em->persist($mainImage);
+                                $manager->persist($mainImage);
 
                                 $imageEntity->setMain(true);
                             }
@@ -81,7 +105,7 @@ class  TricksImages
                             $count++;
                         }
 
-                        $em->persist($imageEntity);
+                        $manager->persist($imageEntity);
                     }
                 }
             }

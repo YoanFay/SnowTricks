@@ -16,51 +16,51 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class PasswordRequestRepository extends ServiceEntityRepository
 {
+
+
+    /**
+     * @param ManagerRegistry $registry
+     */
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, PasswordRequest::class);
-    }
 
+        parent::__construct($registry, PasswordRequest::class);
+
+    }//end __construct()
+
+
+    /**
+     * @param PasswordRequest $entity
+     * @param bool            $flush
+     *
+     * @return void
+     */
     public function add(PasswordRequest $entity, bool $flush = false): void
     {
+
         $this->getEntityManager()->persist($entity);
 
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+
     }
 
+
+    /**
+     * @param PasswordRequest $entity
+     * @param bool            $flush
+     *
+     * @return void
+     */
     public function remove(PasswordRequest $entity, bool $flush = false): void
     {
+
         $this->getEntityManager()->remove($entity);
 
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+
     }
-
-//    /**
-//     * @return PasswordRequest[] Returns an array of PasswordRequest objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('p.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?PasswordRequest
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
 }

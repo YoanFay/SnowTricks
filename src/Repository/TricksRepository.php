@@ -16,11 +16,24 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class TricksRepository extends ServiceEntityRepository
 {
+
+
+    /**
+     * @param ManagerRegistry $registry
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Tricks::class);
-    }
 
+    }//end __construct()
+
+
+    /**
+     * @param Tricks $entity
+     * @param bool   $flush
+     *
+     * @return void
+     */
     public function add(Tricks $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
@@ -30,6 +43,13 @@ class TricksRepository extends ServiceEntityRepository
         }
     }
 
+
+    /**
+     * @param Tricks $entity
+     * @param bool   $flush
+     *
+     * @return void
+     */
     public function remove(Tricks $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
@@ -39,7 +59,11 @@ class TricksRepository extends ServiceEntityRepository
         }
     }
 
+
     /**
+     * @param $start
+     * @param $end
+     *
      * @return Tricks[] Returns an array of Tricks objects
      */
     public function findBetweenStartAndEnd($start, $end): array
@@ -53,29 +77,4 @@ class TricksRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
-
-//    /**
-//     * @return Tricks[] Returns an array of Tricks objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('t.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Tricks
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
 }

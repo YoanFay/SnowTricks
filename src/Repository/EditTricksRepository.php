@@ -16,13 +16,23 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class EditTricksRepository extends ServiceEntityRepository
 {
+    /**
+     * @param ManagerRegistry $registry
+     */
     public function __construct(ManagerRegistry $registry)
     {
 
         parent::__construct($registry, EditTricks::class);
-    }
+
+    }//end __construct()
 
 
+    /**
+     * @param EditTricks $entity
+     * @param bool       $flush
+     *
+     * @return void
+     */
     public function add(EditTricks $entity, bool $flush = false): void
     {
 
@@ -34,6 +44,12 @@ class EditTricksRepository extends ServiceEntityRepository
     }
 
 
+    /**
+     * @param EditTricks $entity
+     * @param bool       $flush
+     *
+     * @return void
+     */
     public function remove(EditTricks $entity, bool $flush = false): void
     {
 
@@ -46,10 +62,13 @@ class EditTricksRepository extends ServiceEntityRepository
 
 
     /**
+     * @param $trick
+     *
      * @return EditTricks[] Returns an array of EditTricks objects
      */
     public function findLastEdit($trick): array
     {
+
         return $this->createQueryBuilder('e')
             ->andWhere('e.trick = :trick')
             ->setParameter('trick', $trick)
@@ -58,29 +77,4 @@ class EditTricksRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
-
-//    /**
-//     * @return EditTricks[] Returns an array of EditTricks objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('e')
-//            ->andWhere('e.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('e.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?EditTricks
-//    {
-//        return $this->createQueryBuilder('e')
-//            ->andWhere('e.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
 }

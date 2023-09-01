@@ -8,14 +8,23 @@ use Doctrine\Persistence\ObjectManager;
 
 class CategoriesFixtures extends Fixture
 {
+
+
+    /**
+     * @param ObjectManager $manager
+     *
+     * @return void
+     */
     public function load(ObjectManager $manager): void
     {
-        $categories = [
-            'Grabs',
-            'Rotations',
-            'Flips',
-            'Slides'
-        ];
+
+        $categories =
+            [
+                'Grabs',
+                'Rotations',
+                'Flips',
+                'Slides'
+            ];
 
         foreach ($categories as $categoryName) {
             $category = new Categories();
@@ -27,5 +36,6 @@ class CategoriesFixtures extends Fixture
         }
 
         $manager->flush();
-    }
+
+    }//end load()
 }
