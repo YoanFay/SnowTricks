@@ -7,45 +7,44 @@ class UtilitaireService
 
 
     /**
-     * @param $chaine
+     * @param $chaine parameter
      *
      * @return array|string|string[]|null
      */
     public function makeSlug($chaine)
     {
 
-        $accent = [
-            'à',
-            'â',
-            'ä',
-            'á',
-            'ã',
-            'å',
-            'æ',
-            'ç',
-            'é',
-            'è',
-            'ê',
-            'ë',
-            'í',
-            'ì',
-            'î',
-            'ï',
-            'ñ',
-            'ó',
-            'ò',
-            'ô',
-            'ö',
-            'õ',
-            'ø',
-            'œ',
-            'ß',
-            'ú',
-            'ù',
-            'û',
-            'ü',
-            'ý',
-            'ÿ'
+        $accent = ['à',
+                   'â',
+                   'ä',
+                   'á',
+                   'ã',
+                   'å',
+                   'æ',
+                   'ç',
+                   'é',
+                   'è',
+                   'ê',
+                   'ë',
+                   'í',
+                   'ì',
+                   'î',
+                   'ï',
+                   'ñ',
+                   'ó',
+                   'ò',
+                   'ô',
+                   'ö',
+                   'õ',
+                   'ø',
+                   'œ',
+                   'ß',
+                   'ú',
+                   'ù',
+                   'û',
+                   'ü',
+                   'ý',
+                   'ÿ',
         ];
 
         $noAccent = [
@@ -79,7 +78,7 @@ class UtilitaireService
             'u',
             'u',
             'y',
-            'y'
+            'y',
         ];
 
         $newChaine = str_replace(
@@ -90,7 +89,7 @@ class UtilitaireService
 
         return preg_replace('/[^a-zA-Z\d]/', '', $newChaine);
 
-    }
+    }//end makeSlug()
 
 
 }

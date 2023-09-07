@@ -53,7 +53,6 @@ class UsersFixtures extends Fixture implements DependentFixtureInterface
             $this->addReference($userTab['login'], $user);
 
             $manager->persist($user);
-
         }
 
         $manager->flush();
@@ -74,4 +73,4 @@ class UsersFixtures extends Fixture implements DependentFixtureInterface
     }//end getDependencies()
 
 
-}
+}//end UsersFixtures

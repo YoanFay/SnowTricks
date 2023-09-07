@@ -10,10 +10,13 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class PasswordRequest
 {
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     *
+     * @var int
      */
     private $id;
 

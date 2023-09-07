@@ -36,7 +36,7 @@ class  UploadService
 
         $dir = $this->kernel->getProjectDir().'/public/img/Tricks/'.$tricksSlug.'/';
 
-        if (!is_dir($dir)) {
+        if (is_dir($dir) === FALSE) {
             mkdir($dir);
         }
 
