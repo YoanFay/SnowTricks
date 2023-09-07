@@ -60,9 +60,11 @@ class Image extends AbstractController
             }
         }
 
-        return $this->json([
-            'result' => true,
-        ]);
+        return $this->json(
+            [
+                'result' => true,
+            ]
+        );
 
     }
 
@@ -79,17 +81,23 @@ class Image extends AbstractController
     {
 
         $manager = $this->getDoctrine()->getManager();
-        $id = $request->request->get('id');
-        $image = $imagesRepository->find($id);
+        $idImage = $request->request->get('id');
+        $image = $imagesRepository->find($idImage);
 
         if ($image === null) {
-            return $this->json([
-                'result' => false,
-            ]);
+            return $this->json(
+                [
+                    'result' => false,
+                ]
+            );
         }
 
-        $mainImage = $imagesRepository->findOneBy(['tricks' => $image->getTricks(),
-                                                   'main'   => true]);
+        $mainImage = $imagesRepository->findOneBy(
+            [
+                'tricks' => $image->getTricks(),
+                'main'   => true
+            ]
+        );
         $mainImage->setMain(false);
         $image->setMain(true);
 
@@ -100,6 +108,7 @@ class Image extends AbstractController
         return $this->json([
             'result' => true,
         ]);
+
     }
 
 

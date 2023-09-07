@@ -69,8 +69,9 @@ class Authenticator extends AbstractFormLoginAuthenticator
     public function supports(Request $request): bool
     {
 
-        return 'signIn' === $request->attributes->get('_route')
-            && $request->isMethod('POST');
+        if ($request->attributes->get('_route') === 'signIn' && $request->isMethod('POST')) {
+            return true;
+        }
 
     }
 
@@ -96,6 +97,7 @@ class Authenticator extends AbstractFormLoginAuthenticator
         );
 
         return $credentials;
+
     }
 
 
@@ -166,4 +168,6 @@ class Authenticator extends AbstractFormLoginAuthenticator
 
         return $this->router->generate('signIn');
     }
+
+    
 }
