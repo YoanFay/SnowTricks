@@ -18,41 +18,50 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AddTricksType extends AbstractType
 {
+
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array                $options
+     *
+     * @return void
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
 
         $builder
-            ->add('name', TextType::class, [
-                'label' => 'Nom du tricks'
-            ])
-            ->add('description', TextareaType::class, [
-                'label' => 'Description du tricks'
-            ])
-            ->add('category', EntityType::class, [
-                'class' => Categories::class,
-                'choice_label' => 'name',
-                'label' => "Catégorie"
-            ])
-            ->add('images', CollectionType::class, [
-                'entry_type' => ImagesType::class,
-                'mapped' => false,
-                'required' => false,
-                'allow_add' => true,
-                'allow_delete' => true
-            ])
-            ->add('videos', CollectionType::class, [
-                'entry_type' => VideoType::class,
-                'mapped' => false,
-                'required' => false,
-                'allow_add' => true,
-                'allow_delete' => true,
-            ])
-            ->add('submit', SubmitType::class, [
-                'label' => "Envoyer"
-            ]);
+            ->add('name', TextType::class, ['label' => 'Nom du tricks'])
+            ->add('description', TextareaType::class, ['label' => 'Description du tricks'])
+            ->add('category', EntityType::class,
+                ['class'        => Categories::class,
+                 'choice_label' => 'name',
+                 'label'        => "Catégorie",
+                ]
+            )
+            ->add('images', CollectionType::class,
+                ['entry_type'   => ImagesType::class,
+                 'mapped'       => false,
+                 'required'     => false,
+                 'allow_add'    => true,
+                 'allow_delete' => true,
+                ]
+            )
+            ->add('videos', CollectionType::class,
+                ['entry_type'   => VideoType::class,
+                 'mapped'       => false,
+                 'required'     => false,
+                 'allow_add'    => true,
+                 'allow_delete' => true,
+                ]
+            )
+            ->add('submit', SubmitType::class, ['label' => "Envoyer"]);
     }
 
 
+    /**
+     * @param OptionsResolver $resolver
+     *
+     * @return void
+     */
     public function configureOptions(OptionsResolver $resolver): void
     {
 
@@ -60,4 +69,6 @@ class AddTricksType extends AbstractType
             'data_class' => Tricks::class,
         ]);
     }
+
+
 }

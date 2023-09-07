@@ -18,53 +18,64 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EditTricksType extends AbstractType
 {
+
+
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array                $options
+     *
+     * @return void
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
 
         $builder
-            ->add('name', TextType::class, [
-                'label' => 'Nom du tricks',
-                'attr' => [
-                    'class' => 'form-control d-inline w-50'
+            ->add('name', TextType::class,
+                ['label' => 'Nom du tricks',
+                 'attr'  => ['class' => 'form-control d-inline w-50'],
                 ]
-            ])
-            ->add('description', TextareaType::class, [
-                'label' => 'Description du tricks',
-                'attr' => [
-                    'class' => 'form-control'
+            )
+            ->add('description', TextareaType::class,
+                ['label' => 'Description du tricks',
+                 'attr'  => ['class' => 'form-control']
                 ]
-            ])
-            ->add('category', EntityType::class, [
-                'class' => Categories::class,
-                'choice_label' => 'name',
-                'label' => "Catégorie",
-                'attr' => [
-                    'class' => 'form-control Width25ToResponsive75'
+            )
+            ->add('category', EntityType::class,
+                ['class'        => Categories::class,
+                 'choice_label' => 'name',
+                 'label'        => "Catégorie",
+                 'attr'         => ['class' => 'form-control Width25ToResponsive75'],
                 ]
-            ])
-            ->add('images', CollectionType::class, [
-                'entry_type' => ImagesType::class,
-                'mapped' => false,
-                'required' => false,
-                'allow_add' => true,
-                'allow_delete' => true
-            ])
-            ->add('videos', CollectionType::class, [
-                'entry_type' => VideoType::class,
-                'mapped' => false,
-                'required' => false,
-                'allow_add' => true,
-                'allow_delete' => true,
-            ])
-            ->add('submit', SubmitType::class, [
-                'label' => "Modifier",
-                'attr' => [
-                    'class' => 'btn btn-primary m-3'
+            )
+            ->add('images', CollectionType::class,
+                ['entry_type'   => ImagesType::class,
+                 'mapped'       => false,
+                 'required'     => false,
+                 'allow_add'    => true,
+                 'allow_delete' => true,
                 ]
-            ]);
+            )
+            ->add('videos', CollectionType::class,
+                ['entry_type'   => VideoType::class,
+                 'mapped'       => false,
+                 'required'     => false,
+                 'allow_add'    => true,
+                 'allow_delete' => true,
+                ]
+            )
+            ->add('submit', SubmitType::class,
+                ['label' => "Modifier",
+                 'attr'  => ['class' => 'btn btn-primary m-3'],
+                ]
+            );
     }
 
 
+    /**
+     * @param OptionsResolver $resolver
+     *
+     * @return void
+     */
     public function configureOptions(OptionsResolver $resolver): void
     {
 
@@ -72,4 +83,6 @@ class EditTricksType extends AbstractType
             'data_class' => Tricks::class,
         ]);
     }
+
+
 }

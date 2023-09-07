@@ -19,7 +19,7 @@ class PasswordRequestRepository extends ServiceEntityRepository
 
 
     /**
-     * @param ManagerRegistry $registry
+     * @param ManagerRegistry $registry parameter
      */
     public function __construct(ManagerRegistry $registry)
     {
@@ -30,8 +30,8 @@ class PasswordRequestRepository extends ServiceEntityRepository
 
 
     /**
-     * @param PasswordRequest $entity
-     * @param bool            $flush
+     * @param PasswordRequest $entity parameter
+     * @param bool            $flush  parameter
      *
      * @return void
      */
@@ -48,8 +48,8 @@ class PasswordRequestRepository extends ServiceEntityRepository
 
 
     /**
-     * @param PasswordRequest $entity
-     * @param bool            $flush
+     * @param PasswordRequest $entity parameter
+     * @param bool            $flush  parameter
      *
      * @return void
      */
@@ -63,4 +63,5 @@ class PasswordRequestRepository extends ServiceEntityRepository
         }
 
     }
+
 }

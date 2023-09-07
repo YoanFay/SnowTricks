@@ -11,30 +11,48 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CommentaireType extends AbstractType
 {
+
+
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array                $options
+     *
+     * @return void
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+
         $builder
-            ->add('message', TextareaType::class,[
-                'label' => 'Laisser un commentaire : ',
-                'attr' => [
-                    'class' => 'form-control mt-2',
-                    'onkeyup' => "textAreaAdjust(this)",
-                    'style' => 'overflow: hidden;',
+            ->add('message', TextareaType::class,
+                ['label' => 'Laisser un commentaire : ',
+                 'attr'  =>
+                     ['class'   => 'form-control mt-2',
+                      'onkeyup' => "textAreaAdjust(this)",
+                      'style'   => 'overflow: hidden;',
+                     ]
                 ]
-            ])
-            ->add('submit', SubmitType::class, [
-                'label' => "Valider",
-                'attr' => [
-                    'class' => 'btn btn-primary mt-2 mb-3'
+            )
+            ->add('submit', SubmitType::class,
+                ['label' => "Valider",
+                 'attr'  =>
+                     ['class' => 'btn btn-primary mt-2 mb-3']
                 ]
-            ]);
-        ;
+            );;
     }
 
+
+    /**
+     * @param OptionsResolver $resolver
+     *
+     * @return void
+     */
     public function configureOptions(OptionsResolver $resolver): void
     {
+
         $resolver->setDefaults([
             'data_class' => Commentaire::class,
         ]);
     }
+
+
 }

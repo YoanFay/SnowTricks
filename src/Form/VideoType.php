@@ -10,20 +10,34 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class VideoType extends AbstractType
 {
+
+
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array                $options
+     *
+     * @return void
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
 
         $builder
-            ->add('link', UrlType::class, [
-                'label' => 'Lien',
-                'attr' => [
-                    'class' => 'form-control mb-3 mt-1',
-                    'placeholder' => 'https://www.youtube.com/embed/.....'
-                ],
-            ]);
+            ->add('link', UrlType::class,
+                ['label' => 'Lien',
+                 'attr'  =>
+                     ['class'       => 'form-control mb-3 mt-1',
+                      'placeholder' => 'https://www.youtube.com/embed/.....'
+                     ],
+                ]
+            );
     }
 
 
+    /**
+     * @param OptionsResolver $resolver
+     *
+     * @return void
+     */
     public function configureOptions(OptionsResolver $resolver): void
     {
 
@@ -31,4 +45,6 @@ class VideoType extends AbstractType
             'data_class' => Video::class,
         ]);
     }
+
+
 }

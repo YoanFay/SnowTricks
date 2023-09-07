@@ -11,22 +11,34 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AskNewPasswordType extends AbstractType
 {
+
+
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array                $options
+     *
+     * @return void
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('login', TextType::class, [
-                'label' => 'Identifiant'
-            ])
-            ->add('submit', SubmitType::class, [
-                'label' => "Envoyer"
-            ])
+            ->add('login', TextType::class, ['label' => 'Identifiant'])
+            ->add('submit', SubmitType::class, ['label' => "Envoyer"])
         ;
     }
 
+
+    /**
+     * @param OptionsResolver $resolver
+     *
+     * @return void
+     */
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => User::class,
         ]);
     }
+
+
 }
