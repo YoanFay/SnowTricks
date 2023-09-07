@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Video
 {
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -28,16 +29,31 @@ class Video
      */
     private $tricks;
 
+
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
+
     }
 
+
+    /**
+     * @return string|null
+     */
     public function getLink(): ?string
     {
         return $this->link;
     }
 
+
+    /**
+     * @param string $link parameter
+     *
+     * @return $this
+     */
     public function setLink(string $link): self
     {
         $this->link = $link;
@@ -45,11 +61,21 @@ class Video
         return $this;
     }
 
+
+    /**
+     * @return Tricks|null
+     */
     public function getTricks(): ?Tricks
     {
         return $this->tricks;
     }
 
+
+    /**
+     * @param Tricks|null $tricks parameter
+     *
+     * @return $this
+     */
     public function setTricks(?Tricks $tricks): self
     {
         $this->tricks = $tricks;

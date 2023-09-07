@@ -13,7 +13,7 @@ class VideosFixtures extends Fixture implements DependentFixtureInterface
 
 
     /**
-     * @param ObjectManager $manager
+     * @param ObjectManager $manager parameter
      *
      * @return void
      */
@@ -21,12 +21,12 @@ class VideosFixtures extends Fixture implements DependentFixtureInterface
     {
 
         $videos
-            =[
-                [
-                    'tricks' => $this->getReference('mute'),
-                    'link' => 'https://www.youtube.com/embed/jm19nEvmZgM',
-                ],
-            ];
+            = [
+            [
+                'tricks' => $this->getReference('mute'),
+                'link'   => 'https://www.youtube.com/embed/jm19nEvmZgM',
+            ],
+        ];
 
         foreach ($videos as $videoTab) {
             $video = new Video();
@@ -41,11 +41,16 @@ class VideosFixtures extends Fixture implements DependentFixtureInterface
     }
 
 
-    public function getDependencies()
+    /**
+     * @return string[]
+     */
+    public function getDependencies(): array
     {
 
         return [
             TricksFixtures::class,
         ];
+
     }
+
 }

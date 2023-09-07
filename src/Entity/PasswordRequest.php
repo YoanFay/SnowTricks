@@ -36,42 +36,84 @@ class PasswordRequest
      */
     private $completed;
 
+
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
+
         return $this->id;
+
     }
 
+
+    /**
+     * @return string|null
+     */
     public function getToken(): ?string
     {
+
         return $this->token;
     }
 
+
+    /**
+     * @param string $token parameter
+     *
+     * @return $this
+     */
     public function setToken(string $token): self
     {
+
         $this->token = $token;
 
         return $this;
     }
 
+
+    /**
+     * @return User|null
+     */
     public function getUser(): ?User
     {
+
         return $this->User;
     }
 
+
+    /**
+     * @param User|null $User parameter
+     *
+     * @return $this
+     */
     public function setUser(?User $User): self
     {
+
         $this->User = $User;
 
         return $this;
     }
 
+
+    /**
+     * @return bool|null
+     */
     public function isCompleted(): ?bool
     {
+
         return $this->completed;
     }
 
+
+    /**
+     * @param bool $completed parameter
+     *
+     * @return $this
+     */
     public function setCompleted(bool $completed): self
     {
+
         $this->completed = $completed;
 
         return $this;

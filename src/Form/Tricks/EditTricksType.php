@@ -86,6 +86,7 @@ class EditTricksType extends AbstractType
                     'attr'  => ['class' => 'btn btn-primary m-3'],
                 ]
             );
+
     }
 
 

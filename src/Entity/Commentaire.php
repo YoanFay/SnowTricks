@@ -150,5 +150,7 @@ class Commentaire
         $this->user = $user;
 
         return $this;
+
     }
+
 }

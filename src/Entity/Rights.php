@@ -12,6 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Rights
 {
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -34,21 +35,40 @@ class Rights
      */
     private $users;
 
+
+    /**
+     *
+     */
     public function __construct()
     {
         $this->users = new ArrayCollection();
+
     }
 
+
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+
+    /**
+     * @return string|null
+     */
     public function getName(): ?string
     {
         return $this->name;
     }
 
+
+    /**
+     * @param string $name parameter
+     *
+     * @return $this
+     */
     public function setName(string $name): self
     {
         $this->name = $name;
@@ -56,11 +76,21 @@ class Rights
         return $this;
     }
 
+
+    /**
+     * @return string|null
+     */
     public function getRole(): ?string
     {
         return $this->role;
     }
 
+
+    /**
+     * @param string $role parameter
+     *
+     * @return $this
+     */
     public function setRole(string $role): self
     {
         $this->role = $role;
@@ -76,6 +106,12 @@ class Rights
         return $this->users;
     }
 
+
+    /**
+     * @param User $user parameter
+     *
+     * @return $this
+     */
     public function addUser(User $user): self
     {
         if (!$this->users->contains($user)) {
@@ -86,10 +122,15 @@ class Rights
         return $this;
     }
 
+
+    /**
+     * @param User $user parameter
+     *
+     * @return $this
+     */
     public function removeUser(User $user): self
     {
         if ($this->users->removeElement($user)) {
-            // set the owning side to null (unless already changed)
             if ($user->getRights() === $this) {
                 $user->setRights(null);
             }

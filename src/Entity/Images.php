@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Images
 {
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -38,54 +39,108 @@ class Images
      */
     private $main = false;
 
+
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
+
         return $this->id;
+
     }
 
+
+    /**
+     * @return string|null
+     */
     public function getName(): ?string
     {
+
         return $this->name;
     }
 
+
+    /**
+     * @param string $name parameter
+     *
+     * @return $this
+     */
     public function setName(string $name): self
     {
+
         $this->name = $name;
 
         return $this;
     }
 
+
+    /**
+     * @return string|null
+     */
     public function getType(): ?string
     {
+
         return $this->type;
     }
 
+
+    /**
+     * @param string $type parameter
+     *
+     * @return $this
+     */
     public function setType(string $type): self
     {
+
         $this->type = $type;
 
         return $this;
     }
 
+
+    /**
+     * @return Tricks|null
+     */
     public function getTricks(): ?Tricks
     {
+
         return $this->tricks;
     }
 
+
+    /**
+     * @param Tricks|null $tricks parameter
+     *
+     * @return $this
+     */
     public function setTricks(?Tricks $tricks): self
     {
+
         $this->tricks = $tricks;
 
         return $this;
     }
 
+
+    /**
+     * @return bool|null
+     */
     public function isMain(): ?bool
     {
+
         return $this->main;
     }
 
+
+    /**
+     * @param bool $main parameter
+     *
+     * @return $this
+     */
     public function setMain(bool $main): self
     {
+
         $this->main = $main;
 
         return $this;
