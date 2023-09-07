@@ -2,30 +2,53 @@
 
 namespace App\Twig;
 
+use DateTime;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 class DateHExtension extends AbstractExtension
 {
+
+
+    /**
+     * @return TwigFilter[]
+     */
     public function getFilters(): array
     {
+
         return [
-// If your filter generates SAFE HTML, you should add a third
-// parameter: ['is_safe' => ['html']]
-// Reference: https://twig.symfony.com/doc/2.x/advanced.html#automatic-escaping
-            new TwigFilter('dateH', [$this, 'formatDate']),
+            new TwigFilter('dateH',
+                [$this,
+                 'formatDate',
+                ]
+            ),
         ];
     }
 
+
+    /**
+     * @return TwigFunction[]
+     */
     public function getFunctions(): array
     {
+
         return [
-            new TwigFunction('function_name', [$this, 'doSomething']),
+            new TwigFunction('function_name',
+                [$this,
+                 'doSomething',
+                ]
+            ),
         ];
     }
 
-    public function formatDate($date)
+
+    /**
+     * @param DateTime|null $date parameter
+     *
+     * @return string|void
+     */
+    public function formatDate(?DateTime $date)
     {
 
         if ($date !== null) {
@@ -34,7 +57,9 @@ class DateHExtension extends AbstractExtension
 
             $date->setTimestamp($dateEurope);
 
-            return $date->format('d/m/Y à H') . 'h' . $date->format('i');
+            return $date->format('d/m/Y à H').'h'.$date->format('i');
         }
     }
+
+
 }

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\CommentaireRepository;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -11,6 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Commentaire
 {
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -52,16 +54,31 @@ class Commentaire
      */
     private $user;
 
+
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
-    }
 
+    }//end getId()
+
+
+    /**
+     * @return string|null
+     */
     public function getMessage(): ?string
     {
         return $this->message;
     }
 
+
+    /**
+     * @param string $message parameter
+     *
+     * @return $this
+     */
     public function setMessage(string $message): self
     {
         $this->message = $message;
@@ -69,23 +86,43 @@ class Commentaire
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+
+    /**
+     * @return DateTimeInterface|null
+     */
+    public function getCreatedAt(): ?DateTimeInterface
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
+
+    /**
+     * @param DateTimeInterface $createdAt parameter
+     *
+     * @return $this
+     */
+    public function setCreatedAt(DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
 
         return $this;
     }
 
+
+    /**
+     * @return Tricks|null
+     */
     public function getTricks(): ?Tricks
     {
         return $this->tricks;
     }
 
+
+    /**
+     * @param Tricks|null $tricks parameter
+     *
+     * @return $this
+     */
     public function setTricks(?Tricks $tricks): self
     {
         $this->tricks = $tricks;
@@ -93,11 +130,21 @@ class Commentaire
         return $this;
     }
 
+
+    /**
+     * @return User|null
+     */
     public function getUser(): ?User
     {
         return $this->user;
     }
 
+
+    /**
+     * @param User|null $user parameter
+     *
+     * @return $this
+     */
     public function setUser(?User $user): self
     {
         $this->user = $user;

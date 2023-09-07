@@ -13,8 +13,8 @@ class VideoType extends AbstractType
 
 
     /**
-     * @param FormBuilderInterface $builder
-     * @param array                $options
+     * @param FormBuilderInterface $builder parameter
+     * @param array                $options parameter
      *
      * @return void
      */
@@ -22,28 +22,34 @@ class VideoType extends AbstractType
     {
 
         $builder
-            ->add('link', UrlType::class,
-                ['label' => 'Lien',
-                 'attr'  =>
-                     ['class'       => 'form-control mb-3 mt-1',
-                      'placeholder' => 'https://www.youtube.com/embed/.....'
-                     ],
+            ->add(
+                'link',
+                UrlType::class,
+                [
+                    'label' => 'Lien',
+                    'attr'  =>
+                        [
+                            'class'       => 'form-control mb-3 mt-1',
+                            'placeholder' => 'https://www.youtube.com/embed/.....'
+                        ],
                 ]
             );
     }
 
 
     /**
-     * @param OptionsResolver $resolver
+     * @param OptionsResolver $resolver parameter
      *
      * @return void
      */
     public function configureOptions(OptionsResolver $resolver): void
     {
 
-        $resolver->setDefaults([
-            'data_class' => Video::class,
-        ]);
+        $resolver->setDefaults(
+            [
+                'data_class' => Video::class,
+            ]
+        );
     }
 
 
