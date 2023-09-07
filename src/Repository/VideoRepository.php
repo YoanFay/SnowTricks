@@ -19,7 +19,7 @@ class VideoRepository extends ServiceEntityRepository
 
 
     /**
-     * @param ManagerRegistry $registry
+     * @param ManagerRegistry $registry parameter
      */
     public function __construct(ManagerRegistry $registry)
     {
@@ -30,8 +30,8 @@ class VideoRepository extends ServiceEntityRepository
 
 
     /**
-     * @param Video $entity
-     * @param bool  $flush
+     * @param Video $entity parameter
+     * @param bool  $flush parameter
      *
      * @return void
      */
@@ -43,12 +43,13 @@ class VideoRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+
     }
 
 
     /**
-     * @param Video $entity
-     * @param bool  $flush
+     * @param Video $entity parameter
+     * @param bool  $flush parameter
      *
      * @return void
      */
@@ -61,4 +62,6 @@ class VideoRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+
+
 }

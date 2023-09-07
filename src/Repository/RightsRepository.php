@@ -18,8 +18,8 @@ class RightsRepository extends ServiceEntityRepository
 {
 
 
-    /**
-     * @param ManagerRegistry $registry
+    /** parameter
+     * @param ManagerRegistry $registry parameter
      */
     public function __construct(ManagerRegistry $registry)
     {
@@ -29,8 +29,8 @@ class RightsRepository extends ServiceEntityRepository
 
 
     /**
-     * @param Rights $entity
-     * @param bool   $flush
+     * @param Rights $entity parameter
+     * @param bool   $flush parameter
      *
      * @return void
      */
@@ -41,12 +41,13 @@ class RightsRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+
     }
 
 
     /**
-     * @param Rights $entity
-     * @param bool   $flush
+     * @param Rights $entity parameter
+     * @param bool   $flush parameter
      *
      * @return void
      */
@@ -58,4 +59,5 @@ class RightsRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+
 }

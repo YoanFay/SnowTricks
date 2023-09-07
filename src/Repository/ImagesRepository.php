@@ -16,8 +16,10 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ImagesRepository extends ServiceEntityRepository
 {
+
+
     /**
-     * @param ManagerRegistry $registry
+     * @param ManagerRegistry $registry parameter
      */
     public function __construct(ManagerRegistry $registry)
     {
@@ -28,8 +30,8 @@ class ImagesRepository extends ServiceEntityRepository
 
 
     /**
-     * @param Images $entity
-     * @param bool   $flush
+     * @param Images $entity parameter
+     * @param bool   $flush parameter
      *
      * @return void
      */
@@ -46,8 +48,8 @@ class ImagesRepository extends ServiceEntityRepository
 
 
     /**
-     * @param Images $entity
-     * @param bool   $flush
+     * @param Images $entity parameter
+     * @param bool   $flush parameter
      *
      * @return void
      */

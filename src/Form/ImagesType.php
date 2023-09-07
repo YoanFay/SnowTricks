@@ -15,8 +15,8 @@ class ImagesType extends AbstractType
 
 
     /**
-     * @param FormBuilderInterface $builder
-     * @param array                $options
+     * @param FormBuilderInterface $builder parameter
+     * @param array                $options parameter
      *
      * @return void
      */
@@ -24,14 +24,18 @@ class ImagesType extends AbstractType
     {
 
         $builder
-            ->add('images', FileType::class,
+            ->add(
+                'images',
+                FileType::class,
                 ['label'    => false,
                  'required' => false,
                  'mapped'   => false,
                  'attr'     => ['class' => 'form-control mb-2 mt-3 checkboxMain'],
                 ]
             )
-            ->add('main', CheckboxType::class,
+            ->add(
+                'main',
+                CheckboxType::class,
                 ['label'    => "Mettre cette image en tant qu'image principale ?",
                  'required' => false,
                  'attr'     => ['class' => 'mx-2 mb-3 checkboxMain'],
@@ -41,16 +45,18 @@ class ImagesType extends AbstractType
 
 
     /**
-     * @param OptionsResolver $resolver
+     * @param OptionsResolver $resolver parameter
      *
      * @return void
      */
     public function configureOptions(OptionsResolver $resolver): void
     {
 
-        $resolver->setDefaults([
-            'data_class' => Images::class,
-        ]);
+        $resolver->setDefaults(
+            [
+                'data_class' => Images::class,
+            ]
+        );
     }
 
 

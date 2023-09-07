@@ -15,8 +15,8 @@ class ResetPasswordType extends AbstractType
 
 
     /**
-     * @param FormBuilderInterface $builder
-     * @param array                $options
+     * @param FormBuilderInterface $builder parameter
+     * @param array                $options parameter
      *
      * @return void
      */
@@ -24,29 +24,34 @@ class ResetPasswordType extends AbstractType
     {
 
         $builder
-            ->add('password', RepeatedType::class,
+            ->add(
+                'password', RepeatedType::class,
                 ['type'            => PasswordType::class,
                  'invalid_message' => 'Les deux mots de passe ne correspondent pas.',
                  'options'         => ['attr' => ['class' => 'password-field']],
                  'required'        => true,
                  'first_options'   => ['label' => 'Mot de passe'],
                  'second_options'  => ['label' => 'Confirmer mot de passe'],
-                ])
+                ]
+            )
             ->add('submit', SubmitType::class, ['label' => "Envoyer"]);
+
     }
 
 
     /**
-     * @param OptionsResolver $resolver
+     * @param OptionsResolver $resolver parameter
      *
      * @return void
      */
     public function configureOptions(OptionsResolver $resolver): void
     {
 
-        $resolver->setDefaults([
+        $resolver->setDefaults(
+            [
             'data_class' => User::class,
-        ]);
+        ]
+        );
     }
 
 

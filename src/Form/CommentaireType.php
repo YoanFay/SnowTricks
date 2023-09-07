@@ -14,8 +14,8 @@ class CommentaireType extends AbstractType
 
 
     /**
-     * @param FormBuilderInterface $builder
-     * @param array                $options
+     * @param FormBuilderInterface $builder parameter
+     * @param array                $options parameter
      *
      * @return void
      */
@@ -23,7 +23,9 @@ class CommentaireType extends AbstractType
     {
 
         $builder
-            ->add('message', TextareaType::class,
+            ->add(
+                'message',
+                TextareaType::class,
                 ['label' => 'Laisser un commentaire : ',
                  'attr'  =>
                      ['class'   => 'form-control mt-2',
@@ -32,7 +34,9 @@ class CommentaireType extends AbstractType
                      ]
                 ]
             )
-            ->add('submit', SubmitType::class,
+            ->add(
+                'submit',
+                SubmitType::class,
                 ['label' => "Valider",
                  'attr'  =>
                      ['class' => 'btn btn-primary mt-2 mb-3']
@@ -42,16 +46,18 @@ class CommentaireType extends AbstractType
 
 
     /**
-     * @param OptionsResolver $resolver
+     * @param OptionsResolver $resolver parameter
      *
      * @return void
      */
     public function configureOptions(OptionsResolver $resolver): void
     {
 
-        $resolver->setDefaults([
-            'data_class' => Commentaire::class,
-        ]);
+        $resolver->setDefaults(
+            [
+                'data_class' => Commentaire::class,
+            ]
+        );
     }
 
 
