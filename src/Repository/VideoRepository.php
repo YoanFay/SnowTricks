@@ -31,7 +31,7 @@ class VideoRepository extends ServiceEntityRepository
 
     /**
      * @param Video $entity parameter
-     * @param bool  $flush parameter
+     * @param bool  $flush  parameter
      *
      * @return void
      */
@@ -49,7 +49,7 @@ class VideoRepository extends ServiceEntityRepository
 
     /**
      * @param Video $entity parameter
-     * @param bool  $flush parameter
+     * @param bool  $flush  parameter
      *
      * @return void
      */
@@ -61,6 +61,7 @@ class VideoRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+
     }
 
 

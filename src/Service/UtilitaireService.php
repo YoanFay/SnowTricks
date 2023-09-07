@@ -7,11 +7,11 @@ class UtilitaireService
 
 
     /**
-     * @param $chaine parameter
+     * @param string $chaine parameter
      *
      * @return array|string|string[]|null
      */
-    public function makeSlug($chaine)
+    public function makeSlug(string $chaine)
     {
 
         $accent

@@ -19,9 +19,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class AddTricksType extends AbstractType
 {
 
+
     /**
-     * @param FormBuilderInterface $builder
-     * @param array                $options
+     * @param FormBuilderInterface $builder parameter
+     * @param array                $options parameter
      *
      * @return void
      */
@@ -31,13 +32,17 @@ class AddTricksType extends AbstractType
         $builder
             ->add('name', TextType::class, ['label' => 'Nom du tricks'])
             ->add('description', TextareaType::class, ['label' => 'Description du tricks'])
-            ->add('category', EntityType::class,
+            ->add(
+                'category',
+                EntityType::class,
                 ['class'        => Categories::class,
                  'choice_label' => 'name',
                  'label'        => "Catégorie",
                 ]
             )
-            ->add('images', CollectionType::class,
+            ->add(
+                'images',
+                CollectionType::class,
                 ['entry_type'   => ImagesType::class,
                  'mapped'       => false,
                  'required'     => false,
@@ -54,20 +59,23 @@ class AddTricksType extends AbstractType
                 ]
             )
             ->add('submit', SubmitType::class, ['label' => "Envoyer"]);
+
     }
 
 
     /**
-     * @param OptionsResolver $resolver
+     * @param OptionsResolver $resolver parameter
      *
      * @return void
      */
     public function configureOptions(OptionsResolver $resolver): void
     {
 
-        $resolver->setDefaults([
+        $resolver->setDefaults(
+            [
             'data_class' => Tricks::class,
-        ]);
+        ]
+        );
     }
 
 

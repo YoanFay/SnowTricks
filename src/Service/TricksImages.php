@@ -7,6 +7,7 @@ use App\Entity\Tricks;
 use App\Kernel;
 use App\Repository\ImagesRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 class  TricksImages
 {
@@ -21,16 +22,22 @@ class  TricksImages
      */
     private $uploadService;
 
+    /**
+     * @var Request
+     */
+    private $request;
+
 
     /**
      * @param ImagesRepository $imagesRepository parameter
      * @param UploadService    $uploadService    parameter
      */
-    public function __construct(ImagesRepository $imagesRepository, UploadService $uploadService)
+    public function __construct(ImagesRepository $imagesRepository, UploadService $uploadService, Request $request)
     {
 
         $this->imagesRepository = $imagesRepository;
         $this->uploadService = $uploadService;
+        $this->request = $request;
 
     }//end __construct()
 
@@ -45,7 +52,12 @@ class  TricksImages
     public function addTricks(array $images, Tricks $trick, EntityManagerInterface $manager)
     {
 
-        $authorizedExt = ['png', 'jpg', 'jpeg', 'webp', 'avif', 'svg'];
+        $authorizedExt = ['png',
+                          'jpg',
+                          'jpeg',
+                          'webp',
+                          'avif',
+                          'svg'];
         foreach ($images as $key => $image) {
             $image = $image['images'];
             if ($image) {
@@ -67,15 +79,30 @@ class  TricksImages
                     }
                 }
             }
-        }
+        }//end foreach
+
     }
 
 
+    /**
+     * @param array                  $images  parameter
+     * @param Tricks                 $trick   parameter
+     * @param EntityManagerInterface $manager parameter
+     *
+     * @return void
+     */
     public function editTricks(array $images, Tricks $trick, EntityManagerInterface $manager)
     {
 
         $count = $this->imagesRepository->countImage($trick)[0][1];
-        $authorizedExt = ['png', 'jpg', 'jpeg', 'webp', 'avif', 'svg'];
+        $authorizedExt = [
+            'png',
+            'jpg',
+            'jpeg',
+            'webp',
+            'avif',
+            'svg'
+        ];
 
         foreach ($images as $key => $image) {
             $image = $image['images'];
@@ -88,10 +115,11 @@ class  TricksImages
                         $imageEntity->setName($name);
                         $imageEntity->setType($image->getClientOriginalExtension());
 
-                        if (isset($request->request->get('edit_tricks')['images'][$key])) {
+                        if (isset($this->request->request->get('edit_tricks')['images'][$key])) {
                             if ($images[$key]['main']) {
 
-                                $mainImage = $this->imagesRepository->findOneBy(['tricks' => $trick, 'main' => true]);
+                                $mainImage = $this->imagesRepository->findOneBy(['tricks' => $trick,
+                                                                                 'main'   => true]);
 
                                 $mainImage->setMain(false);
                                 $manager->persist($mainImage);
@@ -110,6 +138,8 @@ class  TricksImages
                 }
             }
         }
+
     }
+
 
 }

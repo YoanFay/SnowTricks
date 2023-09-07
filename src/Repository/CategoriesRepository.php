@@ -48,8 +48,8 @@ class CategoriesRepository extends ServiceEntityRepository
 
 
     /**
-     * @param Categories $entity
-     * @param bool       $flush
+     * @param Categories $entity parameter
+     * @param bool       $flush  parameter
      *
      * @return void
      */
@@ -61,6 +61,8 @@ class CategoriesRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+
     }
+
 
 }

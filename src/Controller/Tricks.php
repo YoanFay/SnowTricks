@@ -15,6 +15,7 @@ use App\Repository\ImagesRepository;
 use App\Repository\TricksRepository;
 use App\Repository\VideoRepository;
 use App\Service\TricksImages;
+use App\Service\TricksVideos;
 use App\Service\UtilitaireService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -41,7 +42,8 @@ class Tricks extends AbstractController
     public function tricksDetails(TricksRepository $tricksRepository, CommentaireRepository $commentaireRepository, EditTricksRepository $editTricksRepository, ImagesRepository $imagesRepository, Request $request, string $slug)
     {
 
-        $trick = $tricksRepository->findOneBy(['slug' => $slug, 'deleted_at' => null]);
+        $trick = $tricksRepository->findOneBy(['slug'       => $slug,
+                                               'deleted_at' => null]);
 
         if (!$trick) {
             throw $this->createNotFoundException();
@@ -61,34 +63,35 @@ class Tricks extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
+            $manager = $this->getDoctrine()->getManager();
 
             $commentaire->setCreatedAt(new \DateTime());
             $commentaire->setTricks($trick);
             $commentaire->setUser($this->getUser());
 
-            $em->persist($commentaire);
-            $em->flush();
+            $manager->persist($commentaire);
+            $manager->flush();
 
             return $this->redirectToRoute('tricksDetails', ['slug' => $slug]);
-
         }
 
         $tricksCommentaires = $commentaireRepository->findBy(['tricks' => $trick], ['createdAt' => 'DESC']);
 
-        $mainImage = $imagesRepository->findOneBy(['tricks' => $trick, 'main' => true]);
+        $mainImage = $imagesRepository->findOneBy(['tricks' => $trick,
+                                                   'main'   => true]);
 
         return $this->render(
             'tricks/details.html.twig',
             [
-                'trick' => $trick,
-                'lastEdit' => $lastEdit,
+                'trick'        => $trick,
+                'lastEdit'     => $lastEdit,
                 'commentaires' => $tricksCommentaires,
-                'form' => $form->createView(),
-                'mainImage' => $mainImage,
-                'slug' => $slug
+                'form'         => $form->createView(),
+                'mainImage'    => $mainImage,
+                'slug'         => $slug
             ]
         );
+
     }
 
 
@@ -96,12 +99,13 @@ class Tricks extends AbstractController
      * @param Request           $request           parameter
      * @param UtilitaireService $utilitaireService parameter
      * @param TricksImages      $tricksImages      parameter
+     * @param TricksVideos      $tricksVideos      parameter
      *
      * @return RedirectResponse|Response
      *
      * @Route("/tricks/ajouter", name="tricksAdd")
      */
-    public function tricksAdd(Request $request, UtilitaireService $utilitaireService, TricksImages $tricksImages)
+    public function tricksAdd(Request $request, UtilitaireService $utilitaireService, TricksImages $tricksImages, TricksVideos $tricksVideos)
     {
 
         if (!$this->isGranted('ROLE_USER')) {
@@ -115,31 +119,26 @@ class Tricks extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
+            $manager = $this->getDoctrine()->getManager();
 
             $trick->setSlug($utilitaireService->makeSlug($trick->getName()));
             $trick->setUser($this->getUser());
 
-            $em->persist($trick);
+            $manager->persist($trick);
 
             if (isset($request->files->get('add_tricks')['images'])) {
-                $tricksImages->addTricks($request->files->get('add_tricks')['images'], $trick, $em);
+                $tricksImages->addTricks($request->files->get('add_tricks')['images'], $trick, $manager);
             }
 
             if (isset($request->request->get('add_tricks')['videos'])) {
-                foreach ($request->request->get('add_tricks')['videos'] as $video) {
-                    $videoEntity = new Video();
-                    $videoEntity->setTricks($trick);
-                    $videoEntity->setLink($video['link']);
-                    $em->persist($videoEntity);
-                }
+                $tricksVideos->addTricks($trick, $manager);
             }
 
-            $em->flush();
+            $manager->flush();
 
             $this->addFlash('success', 'Trick ajouté avec succès');
             return $this->redirectToRoute('index', ['tricksPage' => 'tricks']);
-        }
+        }//end if
 
         return $this->render(
             'tricks/add.html.twig',
@@ -153,15 +152,16 @@ class Tricks extends AbstractController
     /**
      * @param TricksRepository  $tricksRepository  parameter
      * @param UtilitaireService $utilitaireService parameter
-     * @param VideoRepository   $videoRepository   parameter
      * @param Request           $request           parameter
+     * @param TricksImages      $tricksImages      parameter
+     * @param TricksVideos      $tricksVideos      parameter
      * @param string            $slug              parameter
      *
      * @return RedirectResponse|Response
      *
      * @Route("/tricks/modifier/{slug}", name="tricksEdit")
      */
-    public function tricksEdit(TricksRepository $tricksRepository, UtilitaireService $utilitaireService, VideoRepository $videoRepository, Request $request, TricksImages $tricksImages, string $slug)
+    public function tricksEdit(TricksRepository $tricksRepository, UtilitaireService $utilitaireService, Request $request, TricksImages $tricksImages, TricksVideos $tricksVideos, string $slug)
     {
 
         if (!$this->isGranted('ROLE_USER')) {
@@ -169,7 +169,8 @@ class Tricks extends AbstractController
             return $this->redirectToRoute('index');
         }
 
-        $trick = $tricksRepository->findOneBy(['slug' => $slug, 'deleted_at' => null]);
+        $trick = $tricksRepository->findOneBy(['slug'       => $slug,
+                                               'deleted_at' => null]);
 
         if (!$trick) {
             throw $this->createNotFoundException();
@@ -182,55 +183,30 @@ class Tricks extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-
-            $tricksVideos = $videoRepository->findBy(['tricks' => $trick]);
+            $manager = $this->getDoctrine()->getManager();
 
             if (isset($request->request->get('edit_tricks')['videos'])) {
-                $videos = $request->request->get('edit_tricks')['videos'];
-
-                foreach ($tricksVideos as $tricksVideo) {
-                    foreach ($videos as $video) {
-                        if ($video['link'] === $tricksVideo->getLink()) {
-                            break;
-                        }
-                        $em->remove($tricksVideo);
-                        unset($video);
-                    }
-                }
-
-                foreach ($request->request->get('edit_tricks')['videos'] as $video) {
-
-                    $videoEntity = $videoRepository->findOneBy(['tricks' => $trick, 'link' => $video['link']]);
-
-                    if ($videoEntity === null and $video['link'] !== null and $video['link'] !== "") {
-                        $videoEntity = new Video();
-                        $videoEntity->setTricks($trick);
-                        $videoEntity->setLink($video['link']);
-
-                        $em->persist($videoEntity);
-                    }
-                }
+                $tricksVideos->editTricks($trick, $manager);
             }
 
             if (isset($request->files->get('edit_tricks')['images'])) {
-                $tricksImages->editTricks($request->files->get('edit_tricks')['images'], $trick, $em);
+                $tricksImages->editTricks($request->files->get('edit_tricks')['images'], $trick, $manager);
             }
 
             $trick->setSlug($utilitaireService->makeSlug($trick->getName()));
 
-            $em->persist($trick);
+            $manager->persist($trick);
 
             $editTricks->newValue($trick, $this->getUser());
 
-            $em->persist($editTricks);
-            $em->flush();
+            $manager->persist($editTricks);
+            $manager->flush();
 
             return $this->redirectToRoute('tricksDetails', ['slug' => $trick->getSlug()]);
         }
 
         return $this->render('tricks/edit.html.twig', [
-            'form' => $form->createView(),
+            'form'  => $form->createView(),
             'trick' => $trick
         ]);
     }
@@ -252,12 +228,12 @@ class Tricks extends AbstractController
             return $this->redirectToRoute('index');
         }
 
-        $em = $this->getDoctrine()->getManager();
+        $manager = $this->getDoctrine()->getManager();
         $trick = $tricksRepository->findOneBy(['slug' => $slug]);
 
         $trick->setDeletedAt(new \DateTime());
-        $em->persist($trick);
-        $em->flush();
+        $manager->persist($trick);
+        $manager->flush();
 
         $this->addFlash('success', 'Trick supprimé avec succès.');
         return $this->redirectToRoute('index', ['tricksPage' => 'tricks']);
@@ -265,8 +241,8 @@ class Tricks extends AbstractController
 
 
     /**
-     * @param TricksRepository $tricksRepository
-     * @param Request          $request
+     * @param TricksRepository $tricksRepository parameter
+     * @param Request          $request          parameter
      *
      * @return Response
      *
@@ -278,7 +254,7 @@ class Tricks extends AbstractController
         $start = $request->request->get('start');
         $number = $request->request->get('number');
 
-        $start = $start - 1;
+        $start = ($start - 1);
 
         $tricks = $tricksRepository->findBetweenStartAndEnd($start, $number);
 
@@ -289,4 +265,6 @@ class Tricks extends AbstractController
             ]
         );
     }
+
+
 }

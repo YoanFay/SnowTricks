@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Images;
+use App\Entity\Tricks;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -31,7 +32,7 @@ class ImagesRepository extends ServiceEntityRepository
 
     /**
      * @param Images $entity parameter
-     * @param bool   $flush parameter
+     * @param bool   $flush  parameter
      *
      * @return void
      */
@@ -49,7 +50,7 @@ class ImagesRepository extends ServiceEntityRepository
 
     /**
      * @param Images $entity parameter
-     * @param bool   $flush parameter
+     * @param bool   $flush  parameter
      *
      * @return void
      */
@@ -66,11 +67,11 @@ class ImagesRepository extends ServiceEntityRepository
 
 
     /**
-     * @param $tricks
+     * @param Tricks $tricks parameter
      *
      * @return Images[] Returns an array of Images objects
      */
-    public function countImage($tricks): array
+    public function countImage(Tricks $tricks): array
     {
 
         return $this->createQueryBuilder('i')
@@ -79,6 +80,8 @@ class ImagesRepository extends ServiceEntityRepository
             ->setParameter('tricks', $tricks)
             ->getQuery()
             ->getResult();
+
     }
+
 
 }

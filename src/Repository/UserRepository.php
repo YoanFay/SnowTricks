@@ -19,7 +19,7 @@ class UserRepository extends ServiceEntityRepository
 
 
     /**
-     * @param ManagerRegistry $registry
+     * @param ManagerRegistry $registry parameter
      */
     public function __construct(ManagerRegistry $registry)
     {
@@ -30,8 +30,8 @@ class UserRepository extends ServiceEntityRepository
 
 
     /**
-     * @param User $entity
-     * @param bool $flush
+     * @param User $entity parameter
+     * @param bool $flush  parameter
      *
      * @return void
      */
@@ -48,8 +48,8 @@ class UserRepository extends ServiceEntityRepository
 
 
     /**
-     * @param User $entity
-     * @param bool $flush
+     * @param User $entity parameter
+     * @param bool $flush  parameter
      *
      * @return void
      */
@@ -63,4 +63,6 @@ class UserRepository extends ServiceEntityRepository
         }
 
     }
+
+
 }

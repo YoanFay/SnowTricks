@@ -16,8 +16,10 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class EditTricksRepository extends ServiceEntityRepository
 {
+
+
     /**
-     * @param ManagerRegistry $registry
+     * @param ManagerRegistry $registry parameter
      */
     public function __construct(ManagerRegistry $registry)
     {
@@ -28,8 +30,8 @@ class EditTricksRepository extends ServiceEntityRepository
 
 
     /**
-     * @param EditTricks $entity
-     * @param bool       $flush
+     * @param EditTricks $entity parameter
+     * @param bool       $flush parameter
      *
      * @return void
      */
@@ -41,12 +43,13 @@ class EditTricksRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+
     }
 
 
     /**
-     * @param EditTricks $entity
-     * @param bool       $flush
+     * @param EditTricks $entity parameter
+     * @param bool       $flush parameter
      *
      * @return void
      */
@@ -62,7 +65,7 @@ class EditTricksRepository extends ServiceEntityRepository
 
 
     /**
-     * @param $trick
+     * @param $trick parameter
      *
      * @return EditTricks[] Returns an array of EditTricks objects
      */
@@ -77,4 +80,6 @@ class EditTricksRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+
 }

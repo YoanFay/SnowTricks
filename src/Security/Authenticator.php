@@ -84,11 +84,11 @@ class Authenticator extends AbstractFormLoginAuthenticator
     {
 
         $credentials
-            =[
-                'login' => $request->request->get('login'),
-                'password' => $request->request->get('password'),
-                'csrf_token' => $request->request->get('_csrf_token'),
-            ];
+            = [
+            'login'      => $request->request->get('login'),
+            'password'   => $request->request->get('password'),
+            'csrf_token' => $request->request->get('_csrf_token'),
+        ];
 
         $request->getSession()->set(
             Security::LAST_USERNAME,
@@ -128,8 +128,8 @@ class Authenticator extends AbstractFormLoginAuthenticator
 
 
     /**
-     * @param array $credentials parameter
-     * @param UserInterface $user parameter
+     * @param array         $credentials parameter
+     * @param UserInterface $user        parameter
      *
      * @return bool
      */
@@ -140,6 +140,13 @@ class Authenticator extends AbstractFormLoginAuthenticator
     }
 
 
+    /**
+     * @param Request        $request     parameter
+     * @param TokenInterface $token       parameter
+     * @param string         $providerKey parameter
+     *
+     * @return RedirectResponse
+     */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $providerKey): RedirectResponse
     {
 

@@ -25,14 +25,16 @@ class Image extends AbstractController
     public function imageDelete(ImagesRepository $imagesRepository, Kernel $kernel, Request $request): JsonResponse
     {
 
-        $em = $this->getDoctrine()->getManager();
+        $manager = $this->getDoctrine()->getManager();
         $id = $request->request->get('id');
         $image = $imagesRepository->find($id);
 
         if ($image === null) {
-            return $this->json([
-                'result' => false,
-            ]);
+            return $this->json(
+                [
+                    'result' => false,
+                ]
+            );
         }
 
         $isMain = $image->isMain();
@@ -44,8 +46,8 @@ class Image extends AbstractController
             unlink($imagePath);
         }
 
-        $em->remove($image);
-        $em->flush();
+        $manager->remove($image);
+        $manager->flush();
 
         if ($isMain) {
             $images = $imagesRepository->findBy(['tricks' => $trick]);
@@ -53,14 +55,15 @@ class Image extends AbstractController
             if ($images[0]) {
                 $images[0]->setMain(true);
 
-                $em->persist($images[0]);
-                $em->flush();
+                $manager->persist($images[0]);
+                $manager->flush();
             }
         }
 
         return $this->json([
             'result' => true,
         ]);
+
     }
 
 
@@ -75,7 +78,7 @@ class Image extends AbstractController
     public function imageDefault(ImagesRepository $imagesRepository, Request $request): JsonResponse
     {
 
-        $em = $this->getDoctrine()->getManager();
+        $manager = $this->getDoctrine()->getManager();
         $id = $request->request->get('id');
         $image = $imagesRepository->find($id);
 
@@ -85,16 +88,19 @@ class Image extends AbstractController
             ]);
         }
 
-        $mainImage = $imagesRepository->findOneBy(['tricks' => $image->getTricks(), 'main' => true]);
+        $mainImage = $imagesRepository->findOneBy(['tricks' => $image->getTricks(),
+                                                   'main'   => true]);
         $mainImage->setMain(false);
         $image->setMain(true);
 
-        $em->persist($mainImage);
-        $em->persist($image);
-        $em->flush();
+        $manager->persist($mainImage);
+        $manager->persist($image);
+        $manager->flush();
 
         return $this->json([
             'result' => true,
         ]);
     }
+
+
 }

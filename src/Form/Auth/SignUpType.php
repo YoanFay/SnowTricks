@@ -16,8 +16,8 @@ class SignUpType extends AbstractType
 
 
     /**
-     * @param FormBuilderInterface $builder
-     * @param array                $options
+     * @param FormBuilderInterface $builder parameter
+     * @param array                $options parameter
      *
      * @return void
      */
@@ -27,7 +27,9 @@ class SignUpType extends AbstractType
         $builder
             ->add('login', TextType::class, ['label' => 'Identifiant'])
             ->add('mail', TextType::class, ['label' => 'Email'])
-            ->add('password', RepeatedType::class,
+            ->add(
+                'password',
+                RepeatedType::class,
                 ['type'            => PasswordType::class,
                  'invalid_message' => 'Les deux mots de passe ne correspondent pas.',
                  'options'         => ['attr' => ['class' => 'password-field']],
@@ -37,20 +39,23 @@ class SignUpType extends AbstractType
                 ]
             )
             ->add('submit', SubmitType::class, ['label' => "Inscription"]);
+
     }
 
 
     /**
-     * @param OptionsResolver $resolver
+     * @param OptionsResolver $resolver parameter
      *
      * @return void
      */
     public function configureOptions(OptionsResolver $resolver): void
     {
 
-        $resolver->setDefaults([
+        $resolver->setDefaults(
+            [
             'data_class' => User::class,
-        ]);
+        ]
+        );
     }
 
 
