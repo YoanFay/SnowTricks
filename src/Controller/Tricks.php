@@ -28,22 +28,26 @@ class Tricks extends AbstractController
 
 
     /**
-     * @param TricksRepository      $tricksRepository      parameter
-     * @param CommentaireRepository $commentaireRepository parameter
-     * @param EditTricksRepository  $editTricksRepository  parameter
-     * @param ImagesRepository      $imagesRepository      parameter
-     * @param Request               $request               parameter
-     * @param string                $slug                  parameter
+     * @param TricksRepository      $tricksRepository     parameter
+     * @param CommentaireRepository $commentaireRepo      parameter
+     * @param EditTricksRepository  $editTricksRepository parameter
+     * @param ImagesRepository      $imagesRepository     parameter
+     * @param Request               $request              parameter
+     * @param string                $slug                 parameter
      *
      * @return RedirectResponse|Response
      *
      * @Route("/tricks/details/{slug}", name="tricksDetails")
      */
-    public function tricksDetails(TricksRepository $tricksRepository, CommentaireRepository $commentaireRepository, EditTricksRepository $editTricksRepository, ImagesRepository $imagesRepository, Request $request, string $slug)
+    public function tricksDetails(TricksRepository $tricksRepository, CommentaireRepository $commentaireRepo, EditTricksRepository $editTricksRepository, ImagesRepository $imagesRepository, Request $request, string $slug)
     {
 
-        $trick = $tricksRepository->findOneBy(['slug'       => $slug,
-                                               'deleted_at' => null]);
+        $trick = $tricksRepository->findOneBy(
+            [
+                'slug'       => $slug,
+                'deleted_at' => null
+            ]
+        );
 
         if (!$trick) {
             throw $this->createNotFoundException();
@@ -75,10 +79,14 @@ class Tricks extends AbstractController
             return $this->redirectToRoute('tricksDetails', ['slug' => $slug]);
         }
 
-        $tricksCommentaires = $commentaireRepository->findBy(['tricks' => $trick], ['createdAt' => 'DESC']);
+        $tricksCommentaires = $commentaireRepo->findBy(['tricks' => $trick], ['createdAt' => 'DESC']);
 
-        $mainImage = $imagesRepository->findOneBy(['tricks' => $trick,
-                                                   'main'   => true]);
+        $mainImage = $imagesRepository->findOneBy(
+            [
+                'tricks' => $trick,
+                'main'   => true
+            ]
+        );
 
         return $this->render(
             'tricks/details.html.twig',

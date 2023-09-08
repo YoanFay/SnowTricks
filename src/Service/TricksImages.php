@@ -52,12 +52,14 @@ class  TricksImages
     public function addTricks(array $images, Tricks $trick, EntityManagerInterface $manager)
     {
 
-        $authorizedExt = ['png',
-                          'jpg',
-                          'jpeg',
-                          'webp',
-                          'avif',
-                          'svg'];
+        $authorizedExt = [
+            'png',
+            'jpg',
+            'jpeg',
+            'webp',
+            'avif',
+            'svg'
+        ];
         foreach ($images as $key => $image) {
             $image = $image['images'];
             if ($image) {
@@ -118,8 +120,12 @@ class  TricksImages
                         if (isset($this->request->request->get('edit_tricks')['images'][$key])) {
                             if ($images[$key]['main']) {
 
-                                $mainImage = $this->imagesRepository->findOneBy(['tricks' => $trick,
-                                                                                 'main'   => true]);
+                                $mainImage = $this->imagesRepository->findOneBy(
+                                    [
+                                        'tricks' => $trick,
+                                        'main'   => true
+                                    ]
+                                );
 
                                 $mainImage->setMain(false);
                                 $manager->persist($mainImage);
@@ -137,7 +143,7 @@ class  TricksImages
                     }
                 }
             }
-        }
+        }//end foreach
 
     }
 

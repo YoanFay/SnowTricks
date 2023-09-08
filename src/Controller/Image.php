@@ -105,9 +105,11 @@ class Image extends AbstractController
         $manager->persist($image);
         $manager->flush();
 
-        return $this->json([
-            'result' => true,
-        ]);
+        return $this->json(
+            [
+                'result' => true,
+            ]
+        );
 
     }
 

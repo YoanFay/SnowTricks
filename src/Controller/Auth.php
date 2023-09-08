@@ -38,24 +38,24 @@ class Auth extends AbstractController
         return $this->render(
             'auth/signIn.html.twig',
             [
-                'title' => 'Connexion',
+                'title'         => 'Connexion',
                 'last_username' => $lastUsername,
-                'error' => $error,
+                'error'         => $error,
             ]
         );
     }
 
 
     /**
-     * @param RightsRepository $rightsRepository parameter
-     * @param Request          $request          parameter
-     * @param EmailService     $emailService     parameter
+     * @param RightsRepository $rightsRepository  parameter
+     * @param Request          $request           parameter
+     * @param EmailService     $managerailService parameter
      *
      * @return RedirectResponse|Response
      *
      * @Route("/auth/inscription", name="signUp")
      */
-    public function SignUp(RightsRepository $rightsRepository, Request $request, EmailService $emailService)
+    public function SignUp(RightsRepository $rightsRepository, Request $request, EmailService $managerailService)
     {
 
         $user = new User();
@@ -65,7 +65,7 @@ class Auth extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $em = $this->getDoctrine()->getManager();
+            $manager = $this->getDoctrine()->getManager();
 
             $right = $rightsRepository->findOneBy(['name' => 'Utilisateur']);
 
@@ -73,10 +73,10 @@ class Auth extends AbstractController
             $user->setPassword(password_hash($user->getPassword(), PASSWORD_BCRYPT));
             $user->setRights($right);
 
-            $em->persist($user);
-            $em->flush();
+            $manager->persist($user);
+            $manager->flush();
 
-            $emailService->EMailInscription($user);
+            $managerailService->EMailInscription($user);
 
             $this->addFlash('success', 'Un email de confirmation vous a été envoyé');
             return $this->redirectToRoute('signIn');
@@ -87,7 +87,7 @@ class Auth extends AbstractController
             'auth/signUp.html.twig',
             [
                 'title' => 'Inscription',
-                'form' => $form->createView()
+                'form'  => $form->createView()
             ]
         );
     }
@@ -104,15 +104,15 @@ class Auth extends AbstractController
 
 
     /**
-     * @param Request        $request        parameter
-     * @param UserRepository $userRepository parameter
-     * @param EmailService   $emailService   parameter
+     * @param Request        $request           parameter
+     * @param UserRepository $userRepository    parameter
+     * @param EmailService   $managerailService parameter
      *
      * @return RedirectResponse|Response
      *
      * @Route("/auth/mot-de-passe-oublie", name="ask_new_password")
      */
-    public function askNewPassword(Request $request, UserRepository $userRepository, EmailService $emailService)
+    public function askNewPassword(Request $request, UserRepository $userRepository, EmailService $managerailService)
     {
 
         $form = $this->createForm(AskNewPasswordType::class);
@@ -129,40 +129,41 @@ class Auth extends AbstractController
                 $passwordRequest->setToken(md5(uniqid()));
                 $passwordRequest->setCompleted(false);
 
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($passwordRequest);
-                $em->flush();
+                $manager = $this->getDoctrine()->getManager();
+                $manager->persist($passwordRequest);
+                $manager->flush();
 
-                $emailService->EMailForgotPassword($user, $passwordRequest->getToken());
+                $managerailService->EMailForgotPassword($user, $passwordRequest->getToken());
 
                 $this->addFlash('success', 'Demande de nouveau mot de passe envoyé');
                 return $this->redirectToRoute('index');
             }
+
         }
 
         return $this->render(
             'auth/askNewPassword.html.twig',
             [
                 'title' => 'Mot de passe oublié',
-                'form' => $form->createView()
+                'form'  => $form->createView()
             ]
         );
     }
 
 
     /**
-     * @param Request                   $request                   parameter
-     * @param PasswordRequestRepository $passwordRequestRepository parameter
-     * @param string                    $token                     parameter
+     * @param Request                   $request             parameter
+     * @param PasswordRequestRepository $passwordRequestRepo parameter
+     * @param string                    $token               parameter
      *
      * @return RedirectResponse|Response
      *
      * @Route("/auth/changement-mot-de-passe/{token}", name="reset_password")
      */
-    public function resetPassword(Request $request, PasswordRequestRepository $passwordRequestRepository, string $token)
+    public function resetPassword(Request $request, PasswordRequestRepository $passwordRequestRepo, string $token)
     {
 
-        $passwordRequest = $passwordRequestRepository->findOneBy(['token' => $token]);
+        $passwordRequest = $passwordRequestRepo->findOneBy(['token' => $token]);
 
         if ($passwordRequest->isCompleted()) {
             $this->addFlash('danger', 'Le mot de passe a déjà été modifié');
@@ -181,10 +182,10 @@ class Auth extends AbstractController
             $user->setPassword(password_hash($data['password'], PASSWORD_BCRYPT));
             $passwordRequest->setCompleted(true);
 
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($user);
-            $em->persist($passwordRequest);
-            $em->flush();
+            $manager = $this->getDoctrine()->getManager();
+            $manager->persist($user);
+            $manager->persist($passwordRequest);
+            $manager->flush();
 
             $this->addFlash('success', 'Mot de passe modifié avec succès');
 
@@ -195,7 +196,7 @@ class Auth extends AbstractController
             'auth/resetPassword.html.twig',
             [
                 'title' => 'Nouveau mot de passe',
-                'form' => $form->createView()
+                'form'  => $form->createView()
             ]
         );
     }
@@ -220,9 +221,9 @@ class Auth extends AbstractController
 
         $user->setConfirmed(true);
 
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($user);
-        $em->flush();
+        $manager = $this->getDoctrine()->getManager();
+        $manager->persist($user);
+        $manager->flush();
 
         $this->addFlash('success', 'Compte validé avec succès');
 
