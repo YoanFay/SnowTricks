@@ -73,6 +73,8 @@ class Authenticator extends AbstractFormLoginAuthenticator
             return true;
         }
 
+        return false;
+
     }
 
 
