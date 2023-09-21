@@ -1,4 +1,4 @@
-# Développez de A à Z le site communautaire SnowTricks - Projet 5 - OpenClassroom
+# Développez de A à Z le site communautaire SnowTricks - Projet 6 - OpenClassroom
 
 ## Projet par Yoan Fayolle
 
@@ -18,7 +18,7 @@
 
 ### Identifiant
 
-Les identifiants pour ce connecter au blog sont :
+Les identifiants pour ce connecter au site sont :
 
 Super Administrateur
 
