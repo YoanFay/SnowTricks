@@ -11,7 +11,7 @@
 1.  Cloner le repository grâce à la commande `git clone https://github.com/YoanFay/SnowTricks.git`  
 2.  Renommer le fichier ".env.local.default" en ".env.local" et notez-y votre mailer et votre base de données
 3.  Exècuter la commande "composer install"
-4.  Exècuter la commande "php bin/console doctrine:migrations:generate"
+4.  Exècuter la commande "php bin/console doctrine:migrations:migrate"
 3.  Exècuter la commande "php bin/console doctrine:fixtures:load"
 
 -----------------
