@@ -9,6 +9,7 @@ use App\Entity\Video;
 use App\Form\CommentaireType;
 use App\Form\Tricks\AddTricksType;
 use App\Form\Tricks\EditTricksType;
+use App\Kernel;
 use App\Repository\EditTricksRepository;
 use App\Repository\CommentaireRepository;
 use App\Repository\ImagesRepository;
@@ -169,7 +170,7 @@ class Tricks extends AbstractController
      *
      * @Route("/tricks/modifier/{slug}", name="tricksEdit")
      */
-    public function tricksEdit(TricksRepository $tricksRepository, UtilitaireService $utilitaireService, Request $request, TricksImages $tricksImages, TricksVideos $tricksVideos, string $slug)
+    public function tricksEdit(TricksRepository $tricksRepository, UtilitaireService $utilitaireService, Request $request, TricksImages $tricksImages, TricksVideos $tricksVideos, Kernel $kernel, string $slug)
     {
 
         if (!$this->isGranted('ROLE_USER')) {
@@ -179,6 +180,7 @@ class Tricks extends AbstractController
 
         $trick = $tricksRepository->findOneBy(['slug'       => $slug,
                                                'deleted_at' => null]);
+        $oldSlug = $trick->getSlug();
 
         if (!$trick) {
             throw $this->createNotFoundException();
@@ -193,21 +195,24 @@ class Tricks extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $manager = $this->getDoctrine()->getManager();
 
+            $trick->setSlug($utilitaireService->makeSlug($trick->getName()));
+
+            rename($kernel->getProjectDir().'/public/img/Tricks/'.$oldSlug,$kernel->getProjectDir().'/public/img/Tricks/'.$trick->getSlug());
+
             if (isset($request->request->get('edit_tricks')['videos'])) {
-                $tricksVideos->editTricks($trick, $manager);
+                $tricksVideos->editTricks($trick, $manager, $request);
             }
 
             if (isset($request->files->get('edit_tricks')['images'])) {
-                $tricksImages->editTricks($request->files->get('edit_tricks')['images'], $trick, $manager);
+                $tricksImages->editTricks($request->files->get('edit_tricks')['images'], $trick, $manager, $request);
             }
-
-            $trick->setSlug($utilitaireService->makeSlug($trick->getName()));
 
             $manager->persist($trick);
 
             $editTricks->newValue($trick, $this->getUser());
 
             $manager->persist($editTricks);
+
             $manager->flush();
 
             return $this->redirectToRoute('tricksDetails', ['slug' => $trick->getSlug()]);

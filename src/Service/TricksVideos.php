@@ -24,22 +24,16 @@ class  TricksVideos
      */
     private $uploadService;
 
-    /**
-     * @var Request
-     */
-    private $request;
-
 
     /**
      * @param VideoRepository $videoRepository parameter
      * @param UploadService   $uploadService   parameter
      */
-    public function __construct(VideoRepository $videoRepository, UploadService $uploadService, Request $request)
+    public function __construct(VideoRepository $videoRepository, UploadService $uploadService)
     {
 
         $this->videoRepository = $videoRepository;
         $this->uploadService = $uploadService;
-        $this->request = $request;
 
     }//end __construct()
 
@@ -50,9 +44,9 @@ class  TricksVideos
          *
          * @return void
          */
-    public function addTricks(Tricks $trick, EntityManagerInterface $manager)
+    public function addTricks(Tricks $trick, EntityManagerInterface $manager, Request $request)
     {
-        foreach ($this->request->request->get('add_tricks')['videos'] as $video) {
+        foreach ($request->request->get('add_tricks')['videos'] as $video) {
             $videoEntity = new Video();
             $videoEntity->setTricks($trick);
             $videoEntity->setLink($video['link']);
@@ -67,12 +61,12 @@ class  TricksVideos
      *
      * @return void
      */
-    public function editTricks(Tricks $trick, EntityManagerInterface $manager)
+    public function editTricks(Tricks $trick, EntityManagerInterface $manager, Request $request)
     {
 
         $tricksVideos = $this->videoRepository->findBy(['tricks' => $trick]);
 
-        $videos = $this->request->request->get('edit_tricks')['videos'];
+        $videos = $request->request->get('edit_tricks')['videos'];
 
         foreach ($tricksVideos as $tricksVideo) {
             foreach ($videos as $video) {
@@ -84,7 +78,7 @@ class  TricksVideos
             }
         }
 
-        foreach ($this->request->request->get('edit_tricks')['videos'] as $video) {
+        foreach ($request->request->get('edit_tricks')['videos'] as $video) {
 
             $videoEntity = $this->videoRepository->findOneBy(
                 ['tricks' => $trick,

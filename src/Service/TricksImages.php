@@ -22,22 +22,16 @@ class  TricksImages
      */
     private $uploadService;
 
-    /**
-     * @var Request
-     */
-    private $request;
-
 
     /**
      * @param ImagesRepository $imagesRepository parameter
      * @param UploadService    $uploadService    parameter
      */
-    public function __construct(ImagesRepository $imagesRepository, UploadService $uploadService, Request $request)
+    public function __construct(ImagesRepository $imagesRepository, UploadService $uploadService)
     {
 
         $this->imagesRepository = $imagesRepository;
         $this->uploadService = $uploadService;
-        $this->request = $request;
 
     }//end __construct()
 
@@ -93,7 +87,7 @@ class  TricksImages
      *
      * @return void
      */
-    public function editTricks(array $images, Tricks $trick, EntityManagerInterface $manager)
+    public function editTricks(array $images, Tricks $trick, EntityManagerInterface $manager, Request $request)
     {
 
         $count = $this->imagesRepository->countImage($trick)[0][1];
@@ -117,8 +111,8 @@ class  TricksImages
                         $imageEntity->setName($name);
                         $imageEntity->setType($image->getClientOriginalExtension());
 
-                        if (isset($this->request->request->get('edit_tricks')['images'][$key])) {
-                            if ($images[$key]['main']) {
+                        if (isset($request->request->get('edit_tricks')['images'][$key])) {
+                            if ($request->request->get('edit_tricks')['images'][$key]['main']) {
 
                                 $mainImage = $this->imagesRepository->findOneBy(
                                     [
