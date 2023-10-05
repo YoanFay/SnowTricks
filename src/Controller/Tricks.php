@@ -136,7 +136,7 @@ class Tricks extends AbstractController
             $manager->persist($trick);
 
             if (isset($request->files->get('add_tricks')['images'])) {
-                $tricksImages->addTricks($request->files->get('add_tricks')['images'], $trick, $manager);
+                $tricksImages->addTricks($request->files->get('add_tricks')['images'], $trick, $manager, $request);
             }
 
             if (isset($request->request->get('add_tricks')['videos'])) {
@@ -159,15 +159,6 @@ class Tricks extends AbstractController
 
 
     /**
-     * @param TricksRepository  $tricksRepository  parameter
-     * @param UtilitaireService $utilitaireService parameter
-     * @param Request           $request           parameter
-     * @param TricksImages      $tricksImages      parameter
-     * @param TricksVideos      $tricksVideos      parameter
-     * @param string            $slug              parameter
-     *
-     * @return RedirectResponse|Response
-     *
      * @Route("/tricks/modifier/{slug}", name="tricksEdit")
      */
     public function tricksEdit(TricksRepository $tricksRepository, UtilitaireService $utilitaireService, Request $request, TricksImages $tricksImages, TricksVideos $tricksVideos, Kernel $kernel, string $slug)

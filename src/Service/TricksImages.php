@@ -4,12 +4,11 @@ namespace App\Service;
 
 use App\Entity\Images;
 use App\Entity\Tricks;
-use App\Kernel;
 use App\Repository\ImagesRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class  TricksImages
+class TricksImages
 {
 
     /**
@@ -43,7 +42,7 @@ class  TricksImages
      *
      * @return void
      */
-    public function addTricks(array $images, Tricks $trick, EntityManagerInterface $manager)
+    public function addTricks(array $images, Tricks $trick, EntityManagerInterface $manager, $request)
     {
 
         $authorizedExt = [
@@ -66,7 +65,7 @@ class  TricksImages
                         $imageEntity->setType($image->getClientOriginalExtension());
 
                         if (isset($images[$key])) {
-                            if ($images[$key]['main']) {
+                            if (isset($request->request->get('add_tricks')['images']) && isset($request->request->get('add_tricks')['images'][$key]['main'])) {
                                 $imageEntity->setMain(true);
                             }
                         }
@@ -121,8 +120,10 @@ class  TricksImages
                                     ]
                                 );
 
-                                $mainImage->setMain(false);
-                                $manager->persist($mainImage);
+                                if ($mainImage){
+                                    $mainImage->setMain(false);
+                                    $manager->persist($mainImage);
+                                }
 
                                 $imageEntity->setMain(true);
                             }

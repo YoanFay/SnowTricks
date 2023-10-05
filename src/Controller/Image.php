@@ -98,10 +98,14 @@ class Image extends AbstractController
                 'main'   => true
             ]
         );
-        $mainImage->setMain(false);
+
+        if ($mainImage){
+            $mainImage->setMain(false);
+            $manager->persist($mainImage);
+        }
+
         $image->setMain(true);
 
-        $manager->persist($mainImage);
         $manager->persist($image);
         $manager->flush();
 
