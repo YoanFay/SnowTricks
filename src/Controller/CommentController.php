@@ -14,7 +14,7 @@ class CommentController extends AbstractController
 
 
     /**
-     * @param CommentaireRepository $commentaireRepo  parameter
+     * @param CommentaireRepository $commentRepo      parameter
      * @param TricksRepository      $tricksRepository parameter
      * @param Request               $request          parameter
      * @param string                $slug             parameter
@@ -23,7 +23,7 @@ class CommentController extends AbstractController
      *
      * @Route("/comment/{slug}/list", name="commentList")
      */
-    public function commentList(CommentaireRepository $commentaireRepo, TricksRepository $tricksRepository, Request $request, string $slug): Response
+    public function commentList(CommentaireRepository $commentRepo, TricksRepository $tricksRepository, Request $request, string $slug): Response
     {
 
         $start = $request->request->get('start');
@@ -33,13 +33,13 @@ class CommentController extends AbstractController
 
         $trick = $tricksRepository->findOneBy(['slug' => $slug]);
 
-        $commentaire = $commentaireRepo->findBetweenStartAndEnd($trick, $start, $number);
+        $comment = $commentRepo->findBetweenStartAndEnd($trick, $start, $number);
 
         return $this->render(
             'comment/list.html.twig',
             [
                 'controller_name' => 'CommentController',
-                'commentaires' => $commentaire
+                'commentaires'    => $comment
             ]
         );
 

@@ -3,7 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\EditTricks;
+use App\Entity\Tricks;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -65,20 +68,24 @@ class EditTricksRepository extends ServiceEntityRepository
 
 
     /**
-     * @param $trick parameter
+     * @param Tricks $trick parameter
      *
-     * @return EditTricks[] Returns an array of EditTricks objects
+     * @return EditTricks|null Returns an array of EditTricks objects
      */
-    public function findLastEdit($trick): array
+    public function findLastEdit(Tricks $trick): ?EditTricks
     {
 
-        return $this->createQueryBuilder('e')
-            ->andWhere('e.trick = :trick')
-            ->setParameter('trick', $trick)
-            ->orderBy('e.updatedAt', 'DESC')
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getResult();
+        try {
+            return $this->createQueryBuilder('e')
+                ->andWhere('e.trick = :trick')
+                ->setParameter('trick', $trick)
+                ->orderBy('e.updatedAt', 'DESC')
+                ->setMaxResults(1)
+                ->getQuery()
+                ->getSingleResult();
+        } catch (NoResultException|NonUniqueResultException $e) {
+            return null;
+        }
     }
 
 

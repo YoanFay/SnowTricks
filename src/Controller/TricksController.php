@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\EditTricks;
 use App\Entity\Commentaire;
 use App\Entity\Tricks as TricksEntity;
-use App\Entity\Video;
 use App\Form\CommentaireType;
 use App\Form\Tricks\AddTricksType;
 use App\Form\Tricks\EditTricksType;
@@ -14,9 +13,8 @@ use App\Repository\EditTricksRepository;
 use App\Repository\CommentaireRepository;
 use App\Repository\ImagesRepository;
 use App\Repository\TricksRepository;
-use App\Repository\VideoRepository;
-use App\Service\TricksImages;
-use App\Service\TricksVideos;
+use App\Service\TricksImagesService;
+use App\Service\TricksVideosService;
 use App\Service\UtilitaireService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -24,7 +22,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class Tricks extends AbstractController
+class TricksController extends AbstractController
 {
 
 
@@ -54,33 +52,33 @@ class Tricks extends AbstractController
             throw $this->createNotFoundException();
         }
 
+        //Cherche la dernière modification du trick
         $lastEdit = $editTricksRepository->findLastEdit($trick);
 
-        if (count($lastEdit) > 0) {
-            $lastEdit = $lastEdit[0];
-        } else {
-            $lastEdit = null;
-        }
+        $comment = new Commentaire();
 
-        $commentaire = new Commentaire();
-
-        $form = $this->createForm(CommentaireType::class, $commentaire);
+        $form = $this->createForm(CommentaireType::class, $comment);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $manager = $this->getDoctrine()->getManager();
 
-            $commentaire->setCreatedAt(new \DateTime());
-            $commentaire->setTricks($trick);
-            $commentaire->setUser($this->getUser());
+            $comment->setCreatedAt(new \DateTime());
+            $comment->setTricks($trick);
+            try {
+                $comment->setUser($this->getUser());
+            }catch (\Exception $e){
+                $this->addFlash('danger', "Votre commentaire n'a pas pu être publié");
+            }
 
-            $manager->persist($commentaire);
+            $manager->persist($comment);
             $manager->flush();
 
+            $this->addFlash('success', 'Votre commentaire a été posté avec succès');
             return $this->redirectToRoute('tricksDetails', ['slug' => $slug]);
         }
 
-        $tricksCommentaires = $commentaireRepo->findBy(['tricks' => $trick], ['createdAt' => 'DESC']);
+        $tricksComments = $commentaireRepo->findBy(['tricks' => $trick], ['createdAt' => 'DESC']);
 
         $mainImage = $imagesRepository->findOneBy(
             [
@@ -94,7 +92,7 @@ class Tricks extends AbstractController
             [
                 'trick'        => $trick,
                 'lastEdit'     => $lastEdit,
-                'commentaires' => $tricksCommentaires,
+                'commentaires' => $tricksComments,
                 'form'         => $form->createView(),
                 'mainImage'    => $mainImage,
                 'slug'         => $slug
@@ -105,16 +103,16 @@ class Tricks extends AbstractController
 
 
     /**
-     * @param Request           $request           parameter
-     * @param UtilitaireService $utilitaireService parameter
-     * @param TricksImages      $tricksImages      parameter
-     * @param TricksVideos      $tricksVideos      parameter
+     * @param Request             $request           parameter
+     * @param UtilitaireService   $utilitaireService parameter
+     * @param TricksImagesService $tricksImages      parameter
+     * @param TricksVideosService $tricksVideos      parameter
      *
      * @return RedirectResponse|Response
      *
      * @Route("/tricks/ajouter", name="tricksAdd")
      */
-    public function tricksAdd(Request $request, UtilitaireService $utilitaireService, TricksImages $tricksImages, TricksVideos $tricksVideos)
+    public function tricksAdd(Request $request, UtilitaireService $utilitaireService, TricksImagesService $tricksImages, TricksVideosService $tricksVideos)
     {
 
         if (!$this->isGranted('ROLE_USER')) {
@@ -130,16 +128,19 @@ class Tricks extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $manager = $this->getDoctrine()->getManager();
 
+            //Génère le slug du trick
             $trick->setSlug($utilitaireService->makeSlug($trick->getName()));
             $trick->setUser($this->getUser());
 
             $manager->persist($trick);
 
             if (isset($request->files->get('add_tricks')['images'])) {
+                //Ajoute les images liées au trick
                 $tricksImages->addTricks($request->files->get('add_tricks')['images'], $trick, $manager, $request);
             }
 
             if (isset($request->request->get('add_tricks')['videos'])) {
+                //Ajoute les vidéos liées au trick
                 $tricksVideos->addTricks($trick, $manager);
             }
 
@@ -161,7 +162,7 @@ class Tricks extends AbstractController
     /**
      * @Route("/tricks/modifier/{slug}", name="tricksEdit")
      */
-    public function tricksEdit(TricksRepository $tricksRepository, UtilitaireService $utilitaireService, Request $request, TricksImages $tricksImages, TricksVideos $tricksVideos, Kernel $kernel, string $slug)
+    public function tricksEdit(TricksRepository $tricksRepository, UtilitaireService $utilitaireService, Request $request, TricksImagesService $tricksImages, TricksVideosService $tricksVideos, Kernel $kernel, string $slug)
     {
 
         if (!$this->isGranted('ROLE_USER')) {
@@ -188,7 +189,9 @@ class Tricks extends AbstractController
 
             $trick->setSlug($utilitaireService->makeSlug($trick->getName()));
 
-            rename($kernel->getProjectDir().'/public/img/Tricks/'.$oldSlug,$kernel->getProjectDir().'/public/img/Tricks/'.$trick->getSlug());
+            $projectDir = $kernel->getProjectDir().'/public/img/Tricks/';
+
+            rename($projectDir.$oldSlug,$projectDir.$trick->getSlug());
 
             if (isset($request->request->get('edit_tricks')['videos'])) {
                 $tricksVideos->editTricks($trick, $manager, $request);

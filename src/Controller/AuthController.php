@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Routing\Annotation\Route;
 
-class Auth extends AbstractController
+class AuthController extends AbstractController
 {
 
 
@@ -29,7 +29,7 @@ class Auth extends AbstractController
      *
      * @Route("/auth/connexion", name="signIn")
      */
-    public function SignIn(AuthenticationUtils $authenticationUtils): Response
+    public function signIn(AuthenticationUtils $authenticationUtils): Response
     {
 
         $lastUsername = $authenticationUtils->getLastUsername();
@@ -55,7 +55,7 @@ class Auth extends AbstractController
      *
      * @Route("/auth/inscription", name="signUp")
      */
-    public function SignUp(RightsRepository $rightsRepository, Request $request, EmailService $managerailService)
+    public function signUp(RightsRepository $rightsRepository, Request $request, EmailService $managerailService)
     {
 
         $user = new User();
@@ -98,7 +98,7 @@ class Auth extends AbstractController
      *
      * @Route("/auth/logout", name="logout")
      */
-    public function Logout()
+    public function logout()
     {
     }
 
@@ -118,6 +118,7 @@ class Auth extends AbstractController
         $form = $this->createForm(AskNewPasswordType::class);
 
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $user = $userRepository->findOneBy(['login' => $data['login']]);

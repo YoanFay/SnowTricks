@@ -8,10 +8,10 @@
                 <div class="col-8">
                     <h2>{{ trick.name }} ({{ trick.category.name }})</h2>
                     {% if lastEdit %}
-                        <small>Fiche modifier le {{ lastEdit.updatedAt|dateH }}
+                        <small>Fiche modifiée le {{ lastEdit.updatedAt|dateH }}
                             par {{ lastEdit.updatedBy.login }}</small>
                     {% else %}
-                        <small>Fiche créer le {{ trick.createdAt|dateH }}
+                        <small>Fiche créée le {{ trick.createdAt|dateH }}
                             par {{ trick.user.login }}</small>
                     {% endif %}
                 </div>
@@ -53,7 +53,7 @@
                         {% endfor %}
                     </div>
                     <div>
-                        <button class="btn btn-secondary mt-2 open-modal-btn d-lg-none">
+                        <button type="button" class="btn btn-secondary mt-2 open-modal-btn d-lg-none" data-bs-toggle="modal" data-bs-target="#myModal">
                             Afficher les médias
                         </button>
                     </div>
@@ -104,20 +104,31 @@
         </div>
     </div>
 
-    <div class="modal justify-content-center" id="myModal">
-        <div class="modal-content my-3 w-75 d-flex align-items-center p-2 overflow-scroll">
-            <h2>Contenue multimédia</h2>
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Contenue multimédia</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
 
-            {% for image in trick.images %}
-                <img class="w-100 my-3"
-                     src="/img/Tricks/{{ trick.slug }}/{{ image.name }}.{{ image.type }}"
-                     onclick="changeImg('/img/Tricks/{{ trick.slug }}/{{ image.name }}.{{ image.type }}')">
-            {% endfor %}
-            {% for video in trick.videos %}
-                <iframe class="w-100 my-3" id="selectMedia" src="{{ video.link }}"></iframe>
-            {% endfor %}
+                        {% for image in trick.images %}
+                            <img class="w-100 my-3"
+                                 src="/img/Tricks/{{ trick.slug }}/{{ image.name }}.{{ image.type }}"
+                                 onclick="changeImg('/img/Tricks/{{ trick.slug }}/{{ image.name }}.{{ image.type }}')">
+                        {% endfor %}
+                        {% for video in trick.videos %}
+                            <iframe class="w-100 my-3" id="selectMedia" src="{{ video.link }}"></iframe>
+                        {% endfor %}
 
-            <button class="btn btn-secondary mx-4" id="closeModal">Fermer</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -176,15 +187,7 @@
 
         $('#showMoreButton').on('click', function () {
             let start = $('#showMoreButton').attr('data-number');
-            CommentList(start, 5)
-        });
-
-        $('.open-modal-btn').click(function() {
-            $('#myModal').css('display', 'flex');
-        });
-
-        $('#closeModal').click(function() {
-            $('#myModal').css('display', 'none');
+            CommentList(start, 10)
         });
 
     </script>

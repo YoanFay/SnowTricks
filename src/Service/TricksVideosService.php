@@ -11,7 +11,7 @@ use App\Repository\VideoRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class TricksVideos
+class TricksVideosService
 {
 
     /**

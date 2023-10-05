@@ -22,7 +22,7 @@
             </div>
             <div class="card-body">
                 <div>
-                    <button class="btn btn-secondary mt-2 open-modal-btn d-lg-none">
+                    <button type="button" class="btn btn-secondary mt-2 open-modal-btn d-lg-none" data-bs-toggle="modal" data-bs-target="#myModal">
                         Afficher les médias
                     </button>
                     {% if trick.images != null %}
@@ -73,37 +73,48 @@
         </div>
     </div>
 
-    <div class="modal justify-content-center" id="myModal">
-        <div class="modal-content my-3 w-75 d-flex align-items-center p-2 overflow-scroll">
-            <h2>Contenue multimédia</h2>
-
-            {% if trick.images != null %}
-                <div id="gallery" class="d-flex flex-column align-items-center mt-2 mx-2 w-100">
-                    {% for image in trick.images %}
-                        <div class="Width25ToResponsive75 d-flex flex-column justify-content-between"
-                             id="image-{{ image.id }}">
-                            <div class="w-100 image-container">
-                                <img class="w-100"
-                                     src="/img/Tricks/{{ trick.slug }}/{{ image.name }}.{{ image.type }}"
-                                >
-                                <div class="overlay" onclick="deleteImageAjax({{ image.id }})">
-                                    <span class="material-symbols-outlined cursor-click">delete</span>
-                                </div>
-                            </div>
-                            <div id="btnDefault-{{ image.id }}"
-                                 class="d-flex justify-content-center btnImageDefault {% if image.main %}d-none{% endif %}">
-                                <button class="btn btn-secondary w-75" onclick="setMainImage({{ image.id }})">
-                                    Définir comme image par défaut
-                                </button>
-                                <hr>
-                            </div>
-                        </div>
-                    {% endfor %}
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Contenue multimédia</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-                <hr>
-            {% endif %}
+                <div class="modal-body">
 
-            <button class="btn btn-secondary mx-4" id="closeModal">Fermer</button>
+                    {% if trick.images != null %}
+                        <div id="gallery" class="d-flex flex-column align-items-center mt-2 mx-2 w-100">
+                            {% for image in trick.images %}
+                                <div class="Width25ToResponsive75 d-flex flex-column justify-content-between"
+                                     id="image-{{ image.id }}">
+                                    <div class="w-100 image-container">
+                                        <img class="w-100"
+                                             src="/img/Tricks/{{ trick.slug }}/{{ image.name }}.{{ image.type }}"
+                                        >
+                                        <div class="overlay" onclick="deleteImageAjax({{ image.id }})">
+                                            <span class="material-symbols-outlined cursor-click">delete</span>
+                                        </div>
+                                    </div>
+                                    <div id="btnDefault-{{ image.id }}"
+                                         class="d-flex justify-content-center btnImageDefault {% if image.main %}d-none{% endif %}">
+                                        <button class="btn btn-secondary w-75" onclick="setMainImage({{ image.id }})">
+                                            Définir comme image par défaut
+                                        </button>
+                                        <hr>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <hr>
+                    {% endif %}
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -246,16 +257,6 @@
                 });
             }
         }
-
-        $('.open-modal-btn').click(function () {
-            event.preventDefault();
-            $('#myModal').css('display', 'flex');
-        });
-
-        $('#closeModal').click(function () {
-            event.preventDefault();
-            $('#myModal').css('display', 'none');
-        });
 
     </script>
 

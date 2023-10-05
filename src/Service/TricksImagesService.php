@@ -8,7 +8,7 @@ use App\Repository\ImagesRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class TricksImages
+class TricksImagesService
 {
 
     /**
